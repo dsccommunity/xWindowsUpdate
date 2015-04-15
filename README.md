@@ -1,6 +1,6 @@
-{{AppVeyor build status badge for master branch}}
+[![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3ys/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xwindowsupdate/branch/master)
 
-#{{ModuleName}}
+# xWindowsUpdate
 
 {{Description}}
 
