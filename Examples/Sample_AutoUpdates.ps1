@@ -28,3 +28,4 @@ configuration ConfigureAutoUpdates
 }
 ConfigureAutoUpdates
 Start-DscConfiguration -path ConfigureAutoUpdates -wait -verbose -force
+
