@@ -26,6 +26,9 @@ If no log is used, a temporary log name is created by the resource.
 * Initial release with the following resource:
     - xHotfix
 
+### Unreleased
+-  Added **cMicrosoftUpdate** DSC resource which can be used to enable/disable Microsoft Update in the Windows Update Settings.
+
 ## Examples
 
 ### Install a hotfix present in the path C:/temp/Windows8.1-KB2908279-v2-x86.msu and the ID 2908279
