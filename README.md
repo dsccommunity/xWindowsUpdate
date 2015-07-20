@@ -10,6 +10,10 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 ## Resources
 
+# AutoUpdates
+Configures Automatic Updates on a machine using the registry keys under HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate.
+
+
 ### xHotfix
 
 * **Path**: The path from where the hotfix should be installed
@@ -20,6 +24,10 @@ If no log is used, a temporary log name is created by the resource.
 * **Ensure**: Ensures that the hotfix is **Present** or **Absent**. 
 
 ## Versions
+
+### Unreleased 
+
+- Added AutoUpdates resource to configure Automatic Updates, as one would when using WSUS internally.
 
 ### 1.0.0.0
 
