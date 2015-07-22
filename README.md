@@ -19,13 +19,20 @@ If no log is used, a temporary log name is created by the resource.
 * **Id**: The hotfix ID of the Windows update that uniquely identifies the hotfix.
 * **Ensure**: Ensures that the hotfix is **Present** or **Absent**. 
 
+### cMicrosoftUpdate
+
+* **Ensure**: Determines whether the MS Update should be enabled (ensure) or disabled (absent)
+
 ## Versions
+
+### Unreleased
+-  Added **cMicrosoftUpdate** DSC resource which can be used to enable/disable Microsoft Update in the Windows Update Settings.
 
 ### 1.0.0.0
 
 * Initial release with the following resource:
     - xHotfix
-
+    
 ## Examples
 
 ### Install a hotfix present in the path C:/temp/Windows8.1-KB2908279-v2-x86.msu and the ID 2908279
@@ -64,5 +71,19 @@ Configuration UpdateWindowsWithURI
             Id = "KB2937982"
         } 
     } 
+}
+```
+### Enable Microsoft Update
+
+This configuration will enable the Microsoft Update Settings (checkbox) in the Windows Update settings
+
+```powershell
+Configuration MSUpdate
+{
+    Import-DscResource -Module cMicrosoftUpdate 
+    cMicrosoftUpdate "EnableMSUpdate"
+    {
+        Ensure = "Present"
+    }
 }
 ```
