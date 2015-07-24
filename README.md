@@ -27,7 +27,7 @@ If no log is used, a temporary log name is created by the resource.
 ## Versions
 
 ### Unreleased
--  Added **cMicrosoftUpdate** DSC resource which can be used to enable/disable Microsoft Update in the Windows Update Settings.
+-  Added **xMicrosoftUpdate** DSC resource which can be used to enable/disable Microsoft Update in the Windows Update Settings.
 
 ### 1.0.0.0
 

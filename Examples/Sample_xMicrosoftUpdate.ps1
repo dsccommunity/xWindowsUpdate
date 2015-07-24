@@ -2,11 +2,11 @@
 
 Configuration MSUpdate
 {
-    Import-DscResource -Module cMicrosoftUpdate
+    Import-DscResource -Module xMicrosoftUpdate
 
     Node $AllNodes.NodeName
     {
-        cMicrosoftUpdate "EnableMSUpdate"
+        xMicrosoftUpdate "EnableMSUpdate"
         {
             Ensure = "Present"
         }
@@ -27,7 +27,7 @@ foreach($Node in $ConfigurationData.AllNodes)
 {
     if($Node.NodeName -ne "*")
     {
-        Start-Process -FilePath "robocopy.exe" -ArgumentList ("`"C:\Program Files\WindowsPowerShell\Modules\cMicrosoftUpdate`" `"\\" + $Node.NodeName + "\c$\Program Files\WindowsPowerShell\Modules\cMicrosoftUpdate`" /e /purge /xf") -NoNewWindow -Wait
+        Start-Process -FilePath "robocopy.exe" -ArgumentList ("`"C:\Program Files\WindowsPowerShell\Modules\xMicrosoftUpdate`" `"\\" + $Node.NodeName + "\c$\Program Files\WindowsPowerShell\Modules\xMicrosoftUpdate`" /e /purge /xf") -NoNewWindow -Wait
     }
 }
 
