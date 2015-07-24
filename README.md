@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3ys/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xwindowsupdate/branch/master)
+﻿[![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3ys/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xwindowsupdate/branch/master)
 
 # xWindowsUpdate
 
@@ -27,7 +27,11 @@ If no log is used, a temporary log name is created by the resource.
 ## Versions
 
 ### Unreleased
--  Added **xMicrosoftUpdate** DSC resource which can be used to enable/disable Microsoft Update in the Windows Update Settings.
+
+
+### 2.1.0.0
+
+* Added xMicrosoftUpdate DSC resource which can be used to enable/disable Microsoft Update in the Windows Update Settings.
 
 ### 1.0.0.0
 
