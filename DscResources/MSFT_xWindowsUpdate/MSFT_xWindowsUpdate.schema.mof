@@ -4,7 +4,6 @@ class MSFT_xWindowsUpdate : OMI_BaseResource
     // We can have multiple versions of an update for a single ID, the indentifier is in the file, 
     // Therefore the file path should be the key
     [key, Description("Specifies the path that contains the msu file for the hotfix installation.")] String Path;
-    // The test currently requieres the ID, I filed bug 1303244 for this
     [required, Description("Specifies the Hotfix ID.")] String Id;
     [Write, Description("Specifies the location of the log that contains information from the installation.")] String Log;
     [Write, Description("Specifies whether the hotfix needs to be installed or uninstalled."), ValueMap{"Present","Absent"}, Values{"Present","Absent"}] String Ensure;

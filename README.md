@@ -2,7 +2,9 @@
 
 # xWindowsUpdate
 
-The **xWindowsUpdate** module contains the **xHotfix** DSC resource that installs a Windows Update (or hotfix) from a given path. For more information on Windows Update and Hotfix, please refer to [this TechNet article](http://technet.microsoft.com/en-us/library/cc750077.aspx).
+The **xWindowsUpdate** module contains the **xWindowsUpdate** and **xMicrosoftUpdate** DSC resources.
+**xWindowsUpdate** installs a Windows Update (or hotfix) from a given path. For more information on Windows Update and Hotfix, please refer to [this TechNet article](http://technet.microsoft.com/en-us/library/cc750077.aspx).
+**xMicrosoftUpdate** enables or disables Microsoft Update.
 
 ## Contributing
 Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
@@ -10,23 +12,22 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 ## Resources
 
-### xHotfix
+### xWindowsUpdate
 
 * **Path**: The path from where the hotfix should be installed
-* **URI**: The URI location where the hotfix is present. Only one of Path or URI can be specified.
 * **Log**: The name of the log where installation/uninstallation details are stored. 
 If no log is used, a temporary log name is created by the resource. 
 * **Id**: The hotfix ID of the Windows update that uniquely identifies the hotfix.
 * **Ensure**: Ensures that the hotfix is **Present** or **Absent**. 
 
-### cMicrosoftUpdate
+### xMicrosoftUpdate
 
 * **Ensure**: Determines whether the MS Update should be enabled (ensure) or disabled (absent)
 
 ## Versions
 
 ### Unreleased
--  Added **cMicrosoftUpdate** DSC resource which can be used to enable/disable Microsoft Update in the Windows Update Settings.
+-  Added **xMicrosoftUpdate** DSC resource which can be used to enable/disable Microsoft Update in the Windows Update Settings.
 
 ### 1.0.0.0
 
