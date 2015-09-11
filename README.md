@@ -26,8 +26,9 @@ If no log is used, a temporary log name is created by the resource.
 
 ## Versions
 
-### Unreleased
+### 2.2.0.0
 
+* Minor fixes
 
 ### 2.1.0.0
 
