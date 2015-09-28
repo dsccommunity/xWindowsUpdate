@@ -138,12 +138,12 @@ function Set-TargetResource
     $uri, $kbId = Validate-StandardArguments -Path $Path -Id $Id
 
     #check if there is currently an update pending, if so error
-	Write-Verbose "Checking wusa for pending reboots"
-	$wua = New-Object -ComObject Microsoft.Update.SystemInfo
-	if($wua.RebootRequired)
-	{
-		Throw "There is a prior reboot pending. This prevents wusa from being able to install $Id."
-	}
+    Write-Verbose "Checking wusa for pending reboots"
+    $wua = New-Object -ComObject Microsoft.Update.SystemInfo
+    if($wua.RebootRequired)
+    {
+        Throw "There is a prior reboot pending. This prevents wusa from being able to install $Id."
+    }
             
     if($Ensure -eq 'Present')
     {
@@ -179,7 +179,7 @@ function Set-TargetResource
     }
     
     if($wua.RebootRequired)
-	{
+    {
         # reboot machine if wusa indicates reboot.
         $global:DSCMachineStatus = 1        
     }
