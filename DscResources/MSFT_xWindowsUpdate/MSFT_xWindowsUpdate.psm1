@@ -64,10 +64,8 @@ function Get-TargetResource
     $uri, $kbId = Validate-StandardArguments -Path $Path -Id $Id
 
     Write-Verbose $($LocalizedData.GettingHotfixMessage -f ${Id})
-    
-    $PSBoundParameters.Remove('Id')
 
-    $hotfix = Get-HotFix -Id "KB$kbId" @PSBoundParameters
+    $hotfix = Get-HotFix -Id "KB$kbId"
     
     $returnValue = @{
         Path = ''
