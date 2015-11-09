@@ -172,14 +172,14 @@ function Set-TargetResource
         
     }
     
-    if ($LASTEXITCODE -eq 3010)
+    if ([bool](Get-Variable -Name 'LASTEXITCODE' -ErrorAction 'SilentlyContinue'))
     {
-        # reboot machine if exitcode indicates reboot.
-        # This seems to be broken
-        $global:DSCMachineStatus = 1        
+        if ($LASTEXITCODE -eq 3010)
+        {
+            # reboot machine if exitcode indicates reboot.
+            $global:DSCMachineStatus = 1        
+        }
     }
-            
-    
 }
 
 
