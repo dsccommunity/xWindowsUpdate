@@ -172,7 +172,7 @@ function Set-TargetResource
         
     }
     
-    if ([bool](Get-Variable -Name 'LASTEXITCODE' -ErrorAction 'SilentlyContinue'))
+    if (Test-Path -Path 'variable:\LASTEXITCODE')
     {
         if ($LASTEXITCODE -eq 3010)
         {
