@@ -26,7 +26,7 @@ If no log is used, a temporary log name is created by the resource.
 
 ## Versions
 
-### Unreleased Version
+### Unreleased
 
 * MSFT_xWindowsUpdate: Fixed an issue in the Get-TargetResource function, resulting in the Get-DscConfiguration cmdlet now working appropriately when the resource is applied.
 * MSFT_xWindowsUpdate: Fixed an issue in the Set-TargetResource function that was causing the function to fail when the installation of a hotfix did not provide an exit code.
