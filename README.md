@@ -28,6 +28,8 @@ If no log is used, a temporary log name is created by the resource.
 
 ### Unreleased
 
+* Fixed PSScriptAnalyzer error in examples 
+
 ### 2.3.0.0
 
 * MSFT_xWindowsUpdate: Fixed an issue in the Get-TargetResource function, resulting in the Get-DscConfiguration cmdlet now working appropriately when the resource is applied.
