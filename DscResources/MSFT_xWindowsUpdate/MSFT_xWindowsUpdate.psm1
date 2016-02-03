@@ -64,10 +64,8 @@ function Get-TargetResource
     $uri, $kbId = Validate-StandardArguments -Path $Path -Id $Id
 
     Write-Verbose $($LocalizedData.GettingHotfixMessage -f ${Id})
-    
-    $PSBoundParameters.Remove('Id')
 
-    $hotfix = Get-HotFix -Id "KB$kbId" @PSBoundParameters
+    $hotfix = Get-HotFix -Id "KB$kbId"
     
     $returnValue = @{
         Path = ''
@@ -174,14 +172,14 @@ function Set-TargetResource
         
     }
     
-    if ($LASTEXITCODE -eq 3010)
+    if (Test-Path -Path 'variable:\LASTEXITCODE')
     {
-        # reboot machine if exitcode indicates reboot.
-        # This seems to be broken
-        $global:DSCMachineStatus = 1        
+        if ($LASTEXITCODE -eq 3010)
+        {
+            # reboot machine if exitcode indicates reboot.
+            $global:DSCMachineStatus = 1        
+        }
     }
-            
-    
 }
 
 
