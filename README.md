@@ -1,4 +1,4 @@
-ï»¿[![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3ys/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xwindowsupdate/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3ys/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xwindowsupdate/branch/master)
 
 # xWindowsUpdate
 
@@ -28,6 +28,8 @@ If no log is used, a temporary log name is created by the resource.
 
 ### Unreleased
 
+### 2.3.0.0
+
 * MSFT_xWindowsUpdate: Fixed an issue in the Get-TargetResource function, resulting in the Get-DscConfiguration cmdlet now working appropriately when the resource is applied.
 * MSFT_xWindowsUpdate: Fixed an issue in the Set-TargetResource function that was causing the function to fail when the installation of a hotfix did not provide an exit code.
 
@@ -54,7 +56,7 @@ If the hotfix with the required hotfix ID is already present on the system, the 
 ```powershell
 Configuration UpdateWindowsWithPath
 {       
-    Node â€˜NodeNameâ€™
+    Node ‘NodeName’
     { 
         xHotfix HotfixInstall
         {
@@ -73,7 +75,7 @@ This configuration will install the hotfix from a URI that is connected to a par
 ```powershell
 Configuration UpdateWindowsWithURI
 {
-    Node â€˜NodeNameâ€™
+    Node ‘NodeName’
     { 
         xHotfix HotfixInstall
         {
