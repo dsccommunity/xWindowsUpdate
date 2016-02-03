@@ -5,6 +5,8 @@
 
 Configuration DownloadHotfixFromPath
 {
+    Import-DscResource -ModuleName xWindowsUpdate 
+
     xHotfix m1
     {
         Path = "c:\WindowsBlue-KB2937982-x64.msu"
