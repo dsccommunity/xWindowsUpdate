@@ -2,7 +2,7 @@
 
 Configuration MSUpdate
 {
-    Import-DscResource -Module xMicrosoftUpdate
+    Import-DscResource -Module xWindowsUpdate
 
     Node $AllNodes.NodeName
     {
