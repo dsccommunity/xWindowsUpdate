@@ -22,7 +22,7 @@ If no log is used, a temporary log name is created by the resource.
 
 ### xMicrosoftUpdate
 
-* **Ensure**: Determines whether the MS Update should be enabled (ensure) or disabled (absent)
+* **Ensure**: Determines whether the Microsoft Update service should be enabled (ensure) or disabled (absent) in Windows Update.
 
 ## Versions
 
@@ -58,7 +58,7 @@ If the hotfix with the required hotfix ID is already present on the system, the 
 ```powershell
 Configuration UpdateWindowsWithPath
 {       
-    Node ‘NodeName’
+    Node â€˜NodeNameâ€™
     { 
         xHotfix HotfixInstall
         {
@@ -77,7 +77,7 @@ This configuration will install the hotfix from a URI that is connected to a par
 ```powershell
 Configuration UpdateWindowsWithURI
 {
-    Node ‘NodeName’
+    Node â€˜NodeNameâ€™
     { 
         xHotfix HotfixInstall
         {
