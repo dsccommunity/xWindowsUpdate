@@ -28,6 +28,8 @@ If no log is used, a temporary log name is created by the resource.
 
 ### Unreleased
 
+### 2.4.0.0
+
 * Fixed PSScriptAnalyzer error in examples 
 
 ### 2.3.0.0
