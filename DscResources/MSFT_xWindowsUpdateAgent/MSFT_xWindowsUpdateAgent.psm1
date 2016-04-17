@@ -317,7 +317,7 @@ function Get-TargetResource
 
     $totalUpdatesNotInstalled = 0
     
-    if($SearchResult -and (Get-Member -InputObject $SearchResult -Name Updates -ErrorAction SilentlyContinue) -and (Get-Member -InputObject $SearchResult.Updates -Name Count -ErrorAction SilentlyContinue))
+    if($SearchResult -and @($SearchResult | get-member -MemberType Property |select -ExpandProperty Name) -contains 'Updates' -and @(Get-Member -InputObject $SearchResult.Updates -MemberType Property |select -ExpandProperty Name) -contains 'Count')
     {
         $totalUpdatesNotInstalled = $SearchResult.Updates.Count    
     }
@@ -542,7 +542,7 @@ function Test-TargetResourceProperties
         $searchStringParams[$CategoryItem.ToLowerInvariant()]=$true
     }
 
-    if($UpdateNow -and $Category.Count -eq 0)
+    if($UpdateNow -and (!$Category -or $Category.Count -eq 0))
     {
         Write-Warning 'Defaulting to updating to security updates only.  Please specify Category to avoid this warning.'   
     }
