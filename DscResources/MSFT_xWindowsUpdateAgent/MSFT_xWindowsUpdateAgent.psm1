@@ -279,6 +279,31 @@ function get-WuaSearcher
     } -argumentList @($memberSearchString)    
 }
 
+function Test-SearchResult
+{
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [ValidateNotNull()]
+        [System.Object]
+        $SearchResult
+    )
+    
+    if(!(@($SearchResult | get-member |select -ExpandProperty Name) -contains 'Updates'))
+    {
+        Write-Verbose 'Did not find updates on SearchResult'
+        return $false
+    }
+    if(!(@(Get-Member -InputObject $SearchResult.Updates |select -ExpandProperty Name) -contains 'Count'))
+    {
+        Write-Verbose 'Did not find count on updates on SearchResult'
+        return $false
+    }
+    return $true
+}
+
 function Get-TargetResource
 {
     [CmdletBinding()]
@@ -317,12 +342,9 @@ function Get-TargetResource
 
     $totalUpdatesNotInstalled = 0
     
-    if($SearchResult -and @($SearchResult | get-member -MemberType Property |select -ExpandProperty Name) -contains 'Updates' -and @(Get-Member -InputObject $SearchResult.Updates -MemberType Property |select -ExpandProperty Name) -contains 'Count')
+    if($SearchResult -and (Test-SearchResult -SearchResult $SearchResult))
     {
         $totalUpdatesNotInstalled = $SearchResult.Updates.Count    
-    }
-    else {
-        Write-Verbose 'Did not find updates count'
     }
     
     $CategoryReturn = $Category
