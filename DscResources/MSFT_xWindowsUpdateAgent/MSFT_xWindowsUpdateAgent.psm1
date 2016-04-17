@@ -321,6 +321,9 @@ function Get-TargetResource
     {
         $totalUpdatesNotInstalled = $SearchResult.Updates.Count    
     }
+    else {
+        Write-Verbose 'Did not find updates count'
+    }
     
     $CategoryReturn = $Category
     $UpdateNowReturn = $false
