@@ -21,7 +21,7 @@ function Add-WuaService
     )
     
     $wuaServiceManager = Get-WuaServiceManager
-    $wuaServiceManager.AddService2($ServiceId,$Flags,$AuthorizationCabPath)
+    $wuaServiceManager.AddService2($ServiceId, $Flags, $AuthorizationCabPath)
 }
 
 function Remove-WuaService
@@ -53,8 +53,8 @@ function Get-WuaSearchString
 
 
 
-# invalid, would not install anything - not security and not optional and not important
-#>
+    # invalid, would not install anything - not security and not optional and not important
+    #>
     # security and optional and important
     # not security and optional and important
     if($optional -and $important)
@@ -325,46 +325,51 @@ function Get-TargetResource
         [System.String]
         $Notifications,
         
+        [parameter(Mandatory = $true)]
         [ValidateSet("WindowsUpdate","MicrosoftUpdate","WSUS")]
         [System.String]
-        $Service,
+        $Source,
         
-        [parameter(Mandatory = $true)]
         [bool]
-        $UpdateNow        
+        $UpdateNow = $false        
     )
 
     Test-TargetResourceProperties @PSBoundParameters
-    
-    $SearchResult = (get-WuaSearcher -Category $Category)
-    $notificationLevel = (Get-WuaAuNotificationLevel)
-    $rebootRequired = Get-WuaRebootRequired
+    $totalUpdatesNotInstalled = $null
+    $UpdateNowReturn = $null
+    $rebootRequired = $null
+    if($UpdateNow)
+    {
+        $rebootRequired = Get-WuaRebootRequired
+        $SearchResult = (get-WuaSearcher -Category $Category)
+        $totalUpdatesNotInstalled = 0
+        if($SearchResult -and (Test-SearchResult -SearchResult $SearchResult))
+        {
+            $totalUpdatesNotInstalled = $SearchResult.Updates.Count    
+        }
+        $UpdateNowReturn = $false
+        if($totalUpdatesNotInstalled -eq 0 -and !$rebootRequired)
+        {
+            $UpdateNowReturn = $true
+        }
+    }
 
-    $totalUpdatesNotInstalled = 0
-    
-    if($SearchResult -and (Test-SearchResult -SearchResult $SearchResult))
-    {
-        $totalUpdatesNotInstalled = $SearchResult.Updates.Count    
-    }
-    
+    $notificationLevel = (Get-WuaAuNotificationLevel)
+
+       
     $CategoryReturn = $Category
-    $UpdateNowReturn = $false
-    if($totalUpdatesNotInstalled -eq 0 -and !$rebootRequired)
-    {
-        $UpdateNowReturn = $true
-    }
     
-    $ServiceReturn = 'WindowsUpdate'
+    $SourceReturn = 'WindowsUpdate'
     $UpdateServices = (Get-WuaServiceManager).Services
     #Check if the microsoft update service is registered
     $defaultService = @($UpdateServices).where{$_.IsDefaultAuService}
     Write-Verbose -Message "Get default search service: $($defaultService.ServiceId)"
     if($defaultService.ServiceId -eq '7971f918-a847-4430-9279-4a52d1efe18d')
     {
-        $ServiceReturn = 'MicrosoftUpdate'
+        $SourceReturn = 'MicrosoftUpdate'
     }
     elseif ($defaultService.IsManaged) {
-        $ServiceReturn = 'WSUS'
+        $SourceReturn = 'WSUS'
     }
    
     $returnValue = @{
@@ -374,7 +379,7 @@ function Get-TargetResource
                         TotalUpdatesNotInstalled = $totalUpdatesNotInstalled 
                         RebootRequired = $rebootRequired
                         Notifications = $notificationLevel
-                        Service = $ServiceReturn
+                        Service = $SourceReturn
                         UpdateNow = $UpdateNowReturn
                     }
     $returnValue
@@ -393,19 +398,19 @@ function Set-TargetResource
         
         [ValidateSet("Security","Important","Optional")]
         [System.String[]]
-        $Category,
+        $Category= @('Security'),
         
         [ValidateSet("Disabled","ScheduledInstallation")]
         [System.String]
         $Notifications,
         
+        [parameter(Mandatory = $true)]
         [ValidateSet("WindowsUpdate","MicrosoftUpdate","WSUS")]
         [System.String]
-        $Service,
+        $Source,
         
-        [parameter(Mandatory = $true)]
         [bool]
-        $UpdateNow        
+        $UpdateNow = $false        
     )
 
     Test-TargetResourceProperties @PSBoundParameters
@@ -416,7 +421,7 @@ function Set-TargetResource
     Write-Verbose "updateNow compliant: $updateCompliant"
     $notificationCompliant = (!$Notifications -or $Notifications -eq $Get.Notifications)
     Write-Verbose "notifications compliant: $notificationCompliant"
-    $serviceCompliant = (!$Service -or $Service -eq $Get.Service)
+    $SourceCompliant = (!$Source -or $Source -eq $Get.Service)
     Write-Verbose "service compliant: $notificationCompliant"
 
             If(!$updateCompliant -and $PSCmdlet.ShouldProcess("Install Updates"))
@@ -469,9 +474,9 @@ function Set-TargetResource
                 }
             }    
 
-            If(!$serviceCompliant )
+            If(!$SourceCompliant )
             {
-                if($Service -eq 'MicrosoftUpdate' -and $PSCmdlet.ShouldProcess("Enable Microsoft Update Service"))
+                if($Source -eq 'MicrosoftUpdate' -and $PSCmdlet.ShouldProcess("Enable Microsoft Update Service"))
                 {
                     Write-Verbose "Enable the Microsoft Update setting"
                     Add-WuaService -ServiceId '7971f918-a847-4430-9279-4a52d1efe18d'
@@ -499,19 +504,19 @@ function Test-TargetResource
         
         [ValidateSet("Security","Important","Optional")]
         [System.String[]]
-        $Category,
+        $Category= @('Security'),
         
         [ValidateSet("Disabled","ScheduledInstallation")]
         [System.String]
         $Notifications,
         
+        [parameter(Mandatory = $true)]
         [ValidateSet("WindowsUpdate","MicrosoftUpdate","WSUS")]
         [System.String]
-        $Service,
+        $Source,
         
-        [parameter(Mandatory = $true)]
         [bool]
-        $UpdateNow        
+        $UpdateNow = $false        
     )
 
     Test-TargetResourceProperties @PSBoundParameters
@@ -522,9 +527,9 @@ function Test-TargetResource
     Write-Verbose "updateNow compliant: $updateCompliant"
     $notificationCompliant = (!$Notifications -or $Notifications -eq $Get.Notifications)
     Write-Verbose "notifications compliant: $notificationCompliant"
-    $serviceCompliant = (!$Service -or $Service -eq $Get.Service)
+    $SourceCompliant = (!$Source -or $Source -eq $Get.Service)
     Write-Verbose "service compliant: $notificationCompliant"
-    If($updateCompliant -and $notificationCompliant -and $serviceCompliant)
+    If($updateCompliant -and $notificationCompliant -and $SourceCompliant)
     {
         return $true
     }
@@ -553,13 +558,13 @@ function Test-TargetResourceProperties
         [System.String]
         $Notifications,
         
+        [parameter(Mandatory = $true)]
         [ValidateSet("WindowsUpdate","MicrosoftUpdate","WSUS")]
         [System.String]
-        $Service,
+        $Source,
         
-        [parameter(Mandatory = $true)]
         [bool]
-        $UpdateNow        
+        $UpdateNow 
     )
     $searchStringParams = @{}     
     foreach($CategoryItem in $Category)
@@ -578,7 +583,7 @@ function Test-TargetResourceProperties
         Write-Verbose "Optional updates may include security updates."            
     }
     
-    if($Service -eq 'WSUS')
+    if($Source -eq 'WSUS')
     {
         throw 'The WSUS service option is not implemented.'
     }
