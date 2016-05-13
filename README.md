@@ -94,7 +94,7 @@ Configuration UpdateWindowsWithURI
         xHotfix HotfixInstall
         {
             Ensure = "Present"
-            URI = "http://hotfixv4.microsoft.com/Microsoft%20Office%20SharePoint%20Server%202007/sp2/officekb956056fullfilex64glb/12.0000.6327.5000/free/358323_intl_x64_zip.exe"
+            Path = "http://hotfixv4.microsoft.com/Microsoft%20Office%20SharePoint%20Server%202007/sp2/officekb956056fullfilex64glb/12.0000.6327.5000/free/358323_intl_x64_zip.exe"
             Id = "KB2937982"
         } 
     } 
