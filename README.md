@@ -20,6 +20,14 @@ If no log is used, a temporary log name is created by the resource.
 * **Id**: The hotfix ID of the Windows update that uniquely identifies the hotfix.
 * **Ensure**: Ensures that the hotfix is **Present** or **Absent**. 
 
+### xWindowsUpdateAgent
+
+* **UpdateNow**: Indicates if the resource should trigger an update during consistency (including initial.)
+* **Category**: Indicates the categories (one or more) of updates the resource should update for.  'Security', 'Important', 'Optional'.  Default: 'Security' (please note that security is not mutually exclusive with Important and Optional, so selecting Important may install some security updates, etc.)
+* **Notifications**: Sets the windows update agent notification setting.  Supported options are 'disabled' and 'ScheduledInstallation'.  [Documentation from Windows Update](https://msdn.microsoft.com/en-us/library/windows/desktop/aa385806%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396)
+* **Service**: Sets the service windows update agent will use for searching for updates.  Supported options are 'MicrosoftUpdate' and 'WindowsUpdate'.  Note 'WSUS' is currently reserver for future use.
+* **IsSingleInstance**: Should always be yes.  Ensures you can only have one instance of this resource in a configuration.
+
 ### xMicrosoftUpdate
 
 * **Ensure**: Determines whether the Microsoft Update service should be enabled (ensure) or disabled (absent) in Windows Update.
@@ -27,6 +35,10 @@ If no log is used, a temporary log name is created by the resource.
 ## Versions
 
 ### Unreleased
+
+### 2.5.0.0
+
+* Added xWindowsUpdateAgent
 
 ### 2.4.0.0
 
@@ -84,7 +96,7 @@ Configuration UpdateWindowsWithURI
         xHotfix HotfixInstall
         {
             Ensure = "Present"
-            URI = "http://hotfixv4.microsoft.com/Microsoft%20Office%20SharePoint%20Server%202007/sp2/officekb956056fullfilex64glb/12.0000.6327.5000/free/358323_intl_x64_zip.exe"
+            Path = "http://hotfixv4.microsoft.com/Microsoft%20Office%20SharePoint%20Server%202007/sp2/officekb956056fullfilex64glb/12.0000.6327.5000/free/358323_intl_x64_zip.exe"
             Id = "KB2937982"
         } 
     } 
@@ -101,6 +113,42 @@ Configuration MSUpdate
     cMicrosoftUpdate "EnableMSUpdate"
     {
         Ensure = "Present"
+    }
+}
+```
+
+### Ensure all security and important updates from Microsoft Update are installed
+Set Windows Update Agent to use Microsoft Update.  Disables notification of future updates.  Install all Security and Important updates from Microsoft Update during the configuration using `UpdateNow = $true`.
+
+```PowerShell
+Configuration MuSecurityImportant
+{
+    Import-DscResource -ModuleName xWindowsUpdate
+    xWindowsUpdateAgent MuSecurityImportant
+    {
+        IsSingleInstance = 'Yes'
+        UpdateNow        = $true
+        Category         = @('Security','Important')
+        Service          = 'MicrosoftUpdate'
+        Notifications    = 'Disabled'
+    }
+}
+```
+
+### Set the Windows Update Agent to perform Scheduled installs from the Windows Update service
+
+Sets the Windows Update Agent to use the Windows Update service (vs Microsoft Update or WSUS) and sets the notifications to scheduled install (no notifications, just automatically install the updates.)  Does not install updates during the configuration `UpdateNow = $false`. 
+
+```PowerShell
+Configuration WuScheduleInstall
+{
+    Import-DscResource -ModuleName xWindowsUpdate
+    xWindowsUpdateAgent MuSecurityImportant
+    {
+        IsSingleInstance = 'Yes'
+        UpdateNow        = $false
+        Service          = 'WindowsUpdate'
+        Notifications    = 'ScheduledInstallation'
     }
 }
 ```

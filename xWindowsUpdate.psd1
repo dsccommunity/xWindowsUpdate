@@ -1,6 +1,6 @@
 @{
 # Version number of this module.
-ModuleVersion = '2.4.0.0'
+ModuleVersion = '2.5.0.0'
 
 # ID used to uniquely identify this module
 GUID = 'a9cba250-ea73-4d82-b31b-7e58cc50ffd1'
@@ -47,7 +47,9 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = '* Added xWindowsUpdateAgent
+
+'
 
     } # End of PSData hashtable
 
