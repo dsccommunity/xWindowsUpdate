@@ -36,6 +36,8 @@ If no log is used, a temporary log name is created by the resource.
 
 ### Unreleased
 
+### 2.5.0.0
+
 * Added xWindowsUpdateAgent
 
 ### 2.4.0.0
