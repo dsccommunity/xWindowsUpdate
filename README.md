@@ -28,7 +28,7 @@ If no log is used, a temporary log name is created by the resource.
 * **UpdateNow**: Indicates if the resource should trigger an update during consistency (including initial.)
 * **Category**: Indicates the categories (one or more) of updates the resource should update for.  'Security', 'Important', 'Optional'.  Default: 'Security' (please note that security is not mutually exclusive with Important and Optional, so selecting Important may install some security updates, etc.)
 * **Notifications**: Sets the windows update agent notification setting.  Supported options are 'disabled' and 'ScheduledInstallation'.  [Documentation from Windows Update](https://msdn.microsoft.com/en-us/library/windows/desktop/aa385806%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396)
-* **Service**: Sets the service windows update agent will use for searching for updates.  Supported options are 'MicrosoftUpdate' and 'WindowsUpdate'.  Note 'WSUS' is currently reserver for future use.
+* **Source**: Sets the service windows update agent will use for searching for updates.  Supported options are 'MicrosoftUpdate' and 'WindowsUpdate'.  Note 'WSUS' is currently reserver for future use.
 * **IsSingleInstance**: Should always be yes.  Ensures you can only have one instance of this resource in a configuration.
 
 ### xMicrosoftUpdate
@@ -132,7 +132,7 @@ Configuration MuSecurityImportant
         IsSingleInstance = 'Yes'
         UpdateNow        = $true
         Category         = @('Security','Important')
-        Service          = 'MicrosoftUpdate'
+        Source           = 'MicrosoftUpdate'
         Notifications    = 'Disabled'
     }
 }
@@ -150,7 +150,7 @@ Configuration WuScheduleInstall
     {
         IsSingleInstance = 'Yes'
         UpdateNow        = $false
-        Service          = 'WindowsUpdate'
+        Source           = 'WindowsUpdate'
         Notifications    = 'ScheduledInstallation'
     }
 }
