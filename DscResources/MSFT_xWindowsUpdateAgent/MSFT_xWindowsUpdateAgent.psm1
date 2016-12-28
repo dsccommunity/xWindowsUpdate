@@ -217,6 +217,7 @@ function Set-WuaAuNotificationLevel
         default { throw 'Invalid notification level'}
     }
     $settings = Get-WuaAuSettings
+    $settings.NotificationLevel = $intNotificationLevel
     $settings.Save()
 }
 
