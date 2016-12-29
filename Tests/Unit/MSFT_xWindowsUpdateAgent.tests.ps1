@@ -61,6 +61,7 @@ try
         }
 
         $Global:mockedWuaDisableNotificationLevel = 'Disabled'
+        $Global:mockedWuaAuIncludeRecommendedUpdates = $true
         $Global:mockedWuaOtherNotificationLevel = 'Notify before download'
         $Global:mockedWuaSystemInfoNoReboot = @{
             RebootRequired = $false
@@ -112,6 +113,10 @@ try
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 Mock Get-WuaServiceManager -MockWith { return $Global:mockedMicrosoftUpdateServiceManager}
@@ -170,6 +175,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled  -Source WindowsUpdate )
 
                 it 'should not have called the new-object mock'{
@@ -224,6 +233,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled -Source WindowsUpdate )
 
                 it 'should not have called the new-object mock'{
@@ -274,6 +287,10 @@ try
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled -Source WindowsUpdate )
@@ -328,6 +345,10 @@ try
                     return $Global:mockedWuaSystemInfoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled -Source WindowsUpdate )
 
                 it 'should not have called the new-object mock'{
@@ -380,6 +401,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories  -Source WindowsUpdate)
 
                 it 'should not have called the new-object mock'{
@@ -430,6 +455,10 @@ try
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories  -Source WindowsUpdate)
@@ -492,6 +521,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 it 'should return $true' {
                     (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Source MicrosoftUpdate  -verbose) | should be $false
                 }
@@ -517,6 +550,10 @@ try
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 Mock Get-WuaServiceManager -MockWith { return $Global:mockedMicrosoftUpdateServiceManager}
@@ -548,6 +585,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 it 'should return $true' {
                     (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories  -verbose  -Source WindowsUpdate) | should be $true
                 }
@@ -572,6 +613,10 @@ try
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoReboot
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 it 'should return $false' {
@@ -600,6 +645,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 it 'should return $false' {
                     (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -verbose  -Source WindowsUpdate) | should be $false
                 }
@@ -625,6 +674,10 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 }
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
 
                 it 'should return $true' {
                     (Test-TargetResource  -IsSingleInstance 'yes' -UpdateNow $false -Notifications Disabled -verbose  -Source WindowsUpdate) | should be $true
@@ -661,6 +714,10 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 }
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
 
                 it 'should return $false' {
                     (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $false -Notifications Disabled -verbose  -Source WindowsUpdate) | should be $false
@@ -699,6 +756,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 it 'should return $true' {
                     (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate) | should be $false
                 }
@@ -724,6 +785,10 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 }
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
 
                 it 'should return $true' {
                     (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $false -verbose -Category $testCategories -Source WindowsUpdate) | should be $true
@@ -770,6 +835,10 @@ try
 
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 Mock Get-WuaRebootRequired -MockWith {
@@ -827,6 +896,11 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 mock Add-WuaService -MockWith {} -Verifiable
                 mock Remove-WuaService -MockWith {}
                 Mock Invoke-WuaDownloadUpdates -MockWith {}
@@ -876,6 +950,11 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 mock Add-WuaService -MockWith {}
                 mock Remove-WuaService -MockWith {}
                 Mock Invoke-WuaDownloadUpdates -MockWith {}
@@ -926,6 +1005,10 @@ try
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 Mock Get-WuaServiceManager -MockWith { return $Global:mockedMicrosoftUpdateServiceManager} -Verifiable
@@ -980,6 +1063,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 Mock Invoke-WuaDownloadUpdates -MockWith {}
                 Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
@@ -1025,6 +1112,10 @@ try
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoReboot
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 Mock Invoke-WuaDownloadUpdates -MockWith {}
@@ -1074,6 +1165,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 Mock Invoke-WuaDownloadUpdates -MockWith {} -Verifiable
                 Mock Invoke-WuaInstallUpdates -MockWith {} -Verifiable
                 Mock Set-WuaAuNotificationLevel -MockWith {}
@@ -1114,6 +1209,10 @@ try
 
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 Mock Get-WuaSystemInfo -MockWith {
@@ -1181,6 +1280,10 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 }
 
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
+
                 Mock Invoke-WuaDownloadUpdates -MockWith {}
                 Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
@@ -1238,6 +1341,10 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 }
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
+                } -Verifiable
 
                 Mock Invoke-WuaDownloadUpdates -MockWith {}
                 Mock Invoke-WuaInstallUpdates -MockWith {}
@@ -1297,6 +1404,10 @@ try
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
+                } -Verifiable
+
+                Mock Get-WuaAuIncludeRecommendedUpdates -MockWith {
+                    return $Global:mockedWuaAuIncludeRecommendedUpdates
                 } -Verifiable
 
                 Mock Invoke-WuaDownloadUpdates -MockWith {} -Verifiable

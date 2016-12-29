@@ -49,6 +49,8 @@ Please check out common DSC Resources
 * **Notifications**: Sets the windows update agent notification setting.
     Supported options are 'disabled' and 'ScheduledInstallation'.
     [Documentation from Windows Update](https://msdn.microsoft.com/en-us/library/windows/desktop/aa385806%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396)
+* **IncludeRecommendedUpdates**: Move Recommended Updates from Optional to
+    Important group (default false).
 * **Source**: Sets the service windows update agent will use for searching
     for updates.  Supported options are 'MicrosoftUpdate' and 'WindowsUpdate'.
     Note 'WSUS' is currently reserver for future use.
