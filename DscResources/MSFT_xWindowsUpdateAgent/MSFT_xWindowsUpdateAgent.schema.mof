@@ -10,6 +10,7 @@ class MSFT_xWindowsUpdateAgent : OMI_BaseResource
         Values{"Disabled","ScheduledInstallation"}] String Notifications;
     [Required, Description("Indicates which source service Windows update agent should use.  Note: WSUS is not implemented in this resource."), ValueMap{"WindowsUpdate","MicrosoftUpdate","WSUS"}, 
         Values{"WindowsUpdate","MicrosoftUpdate","WSUS"}] String Source;
+    [Write, Description("Move Recommended Updates from option to important.")] boolean IncludeRecommendedUpdates;
     [Write, Description("Indicates if the resource should trigger an update during consistency.")] boolean UpdateNow;
     [Read, Description("Automatic Updates Notification Setting")] String AutomaticUpdatesNotificationSetting;
     [Read, Description("Count of updates not installed.  Only returned if UpdateNow is specified.")] uint32  TotalUpdatesNotInstalled;
