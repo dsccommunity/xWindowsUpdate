@@ -291,12 +291,12 @@ function Test-SearchResult
         $SearchResult
     )
     
-    if(!(@($SearchResult | get-member |select -ExpandProperty Name) -contains 'Updates'))
+    if(!(@($SearchResult | get-member |Select-Object -ExpandProperty Name) -contains 'Updates'))
     {
         Write-Verbose 'Did not find updates on SearchResult'
         return $false
     }
-    if(!(@(Get-Member -InputObject $SearchResult.Updates |select -ExpandProperty Name) -contains 'Count'))
+    if(!(@(Get-Member -InputObject $SearchResult.Updates |Select-Object -ExpandProperty Name) -contains 'Count'))
     {
         Write-Verbose 'Did not find count on updates on SearchResult'
         return $false
