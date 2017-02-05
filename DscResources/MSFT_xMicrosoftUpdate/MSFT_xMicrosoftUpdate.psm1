@@ -18,7 +18,7 @@ function Get-TargetResource
                     }
 
     #Check if the microsoft update service is registered
-    if($UpdateServices | where {$_.ServiceID -eq '7971f918-a847-4430-9279-4a52d1efe18d'})
+    if($UpdateServices | Where-Object {$_.ServiceID -eq '7971f918-a847-4430-9279-4a52d1efe18d'})
     {
         $returnValue.Ensure = 'Present'
     }
