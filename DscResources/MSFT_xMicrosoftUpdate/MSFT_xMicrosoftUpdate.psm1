@@ -10,6 +10,7 @@ function Get-TargetResource
         $Ensure
     )
 
+    Write-Verbose "Getting Windows Update Agent services..."
     #Get the registered update services
     $UpdateServices = (New-Object -ComObject Microsoft.Update.ServiceManager).Services
 
@@ -20,10 +21,12 @@ function Get-TargetResource
     #Check if the microsoft update service is registered
     if($UpdateServices | Where-Object {$_.ServiceID -eq '7971f918-a847-4430-9279-4a52d1efe18d'})
     {
+        Write-Verbose "Microsoft Update Present..."
         $returnValue.Ensure = 'Present'
     }
     Else
     {
+        Write-Verbose "Microsoft Update Absent..."
         $returnValue.Ensure = 'Absent'
     }
     
@@ -84,6 +87,8 @@ function Set-TargetResource
 
 function Test-TargetResource
 {
+    # Verbose messages are written in Get.
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSDSCUseVerboseMessageInDSCResource", "")]
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     param
