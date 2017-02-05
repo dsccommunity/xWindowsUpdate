@@ -1392,7 +1392,7 @@ try
                @{ Category = @() }
             ) 
             Context 'Verify wua call works' {
-                it "Should get a searcher" -skip -TestCases $testCases {
+                it "Should get a searcher - Category: <Category>" -skip -TestCases $testCases {
                     param([string[]]$category)
                     $searcher = (get-wuaSearcher -category $category -verbose) 
                     $searcher | get-member 
@@ -1401,7 +1401,7 @@ try
             }
             Context 'verify call flow' {
                 mock get-wuaWrapper -MockWith {return "testResult"} 
-                it "should call get-wuasearchstring" -TestCases $testCases {
+                it "should call get-wuasearchstring - Category: <Category>" -TestCases $testCases {
                     param([string[]]$category)
                     $global:ImportantExpected = ($category -contains 'Important')
                     $global:SecurityExpected = ($category -contains 'Security')
