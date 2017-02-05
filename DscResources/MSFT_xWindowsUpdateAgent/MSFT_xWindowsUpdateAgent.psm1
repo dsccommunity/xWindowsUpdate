@@ -388,6 +388,8 @@ function Get-TargetResource
 
 function Set-TargetResource
 {
+    # should be [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "DSCMachineStatus")], but it doesn't work
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]   
     [CmdletBinding(SupportsShouldProcess=$true)]
     param
     (
