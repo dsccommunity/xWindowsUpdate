@@ -20,7 +20,7 @@ Data LocalizedData
         TestingEnsure = Testing whether hotfix is {0}.
         InvalidPath=The specified Path ({0}) is not in a valid format. Valid formats are local paths, UNC, and HTTP.
         InvalidBinaryType=The specified Path ({0}) does not appear to specify an MSU file and as such is not supported.
-        ValidateStandardArgumentsPathwasPath = Validate-StandardArguments, Path was {0}.
+        ValidateStandardArgumentsPathwasPath = Test-StandardArguments, Path was {0}.
         NeedToDownloadFileFromSchemeDestinationWillBeDestName = Need to download file from {0}, destination will be {1}.
         TheUriSchemeWasUriScheme = The uri scheme was {0}.
         MountSharePath=Mount share to get media.
@@ -61,7 +61,7 @@ function Get-TargetResource
     )
     Set-StrictMode -Version latest
 
-    $uri, $kbId = Validate-StandardArguments -Path $Path -Id $Id
+    $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
 
     Write-Verbose $($LocalizedData.GettingHotfixMessage -f ${Id})
 
@@ -88,7 +88,7 @@ Function Trace-Message
     }
 }
 
-Function Throw-InvalidArgumentException
+Function New-InvalidArgumentException
 {
     param(
         [string] $Message,
@@ -104,6 +104,8 @@ Function Throw-InvalidArgumentException
 # The Set-TargetResource cmdlet
 function Set-TargetResource
 {
+    # should be [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "DSCMachineStatus")], but it doesn't work
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]   
     [CmdletBinding()]
     Param
     (
@@ -133,13 +135,13 @@ function Set-TargetResource
 
         Write-Verbose "$($LocalizedData.LogNotSpecified -f ${Log})"
     }
-    $uri, $kbId = Validate-StandardArguments -Path $Path -Id $Id
+    $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
 
     
             
     if($Ensure -eq 'Present')
     {
-        $filePath = Validate-Path -uri $uri -Credential $Credential 
+        $filePath = Test-WindowsUpdatePath -uri $uri -Credential $Credential 
         Write-Verbose "$($LocalizedData.StartKeyWord) $($LocalizedData.ActionInstallUsingwsusa)"
     
         Start-Process -FilePath 'wusa.exe' -ArgumentList "`"$filepath`" /quiet /norestart /log:`"$Log`"" -Wait -NoNewWindow -ErrorAction SilentlyContinue
@@ -209,7 +211,7 @@ function Test-TargetResource
     )
     Set-StrictMode -Version latest
     Write-Verbose "$($LocalizedData.TestingEnsure -f ${Ensure})"
-    $uri, $kbId = Validate-StandardArguments -Path $Path -Id $Id
+    $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
     
     # This is not the correct way to test to see if an update is applicable to a machine
     # but, WUSA does not currently expose a way to ask.
@@ -227,7 +229,7 @@ function Test-TargetResource
 
 }
 
-Function Validate-StandardArguments
+Function Test-StandardArguments
 {
     param(
         [string]
@@ -246,25 +248,25 @@ Function Validate-StandardArguments
     }
     catch
     {
-        Throw-InvalidArgumentException ($LocalizedData.InvalidPath -f $Path) 'Path'
+        New-InvalidArgumentException ($LocalizedData.InvalidPath -f $Path) 'Path'
     }
     
     if(-not @('file', 'http', 'https') -contains $uri.Scheme)
     {
         Trace-Message ($Localized.TheUriSchemeWasUriScheme -f $uri.Scheme)
-        Throw-InvalidArgumentException ($LocalizedData.InvalidPath -f $Path) 'Path'
+        New-InvalidArgumentException ($LocalizedData.InvalidPath -f $Path) 'Path'
     }
     
     $pathExt = [System.IO.Path]::GetExtension($Path)
     Trace-Message ($LocalizedData.ThePathExtensionWasPathExt -f $pathExt)
     if(-not @('.msu') -contains $pathExt.ToLower())
     {
-        Throw-InvalidArgumentException ($LocalizedData.InvalidBinaryType -f $Path) 'Path'
+        New-InvalidArgumentException ($LocalizedData.InvalidBinaryType -f $Path) 'Path'
     }
     
     if(-not $Id)
     {
-        Throw-InvalidArgumentException ($LocalizedData.NeedsMoreInfo -f $Path) 'Id'
+        New-InvalidArgumentException ($LocalizedData.NeedsMoreInfo -f $Path) 'Id'
     }
     else
     {
@@ -276,7 +278,7 @@ Function Validate-StandardArguments
             }
             else
             {
-                Throw-InvalidArgumentException ($LocalizedData.InvalidIdFormat -f $Path) 'Id'
+                New-InvalidArgumentException ($LocalizedData.InvalidIdFormat -f $Path) 'Id'
             }
         }
         elseif($id -match '[0-9]+')
@@ -287,7 +289,7 @@ Function Validate-StandardArguments
             }
             else
             {
-                Throw-InvalidArgumentException ($LocalizedData.InvalidIdFormat -f $Path) 'Id'
+                New-InvalidArgumentException ($LocalizedData.InvalidIdFormat -f $Path) 'Id'
             }
         }
     }
@@ -296,7 +298,7 @@ Function Validate-StandardArguments
 }
 
 
-function Validate-Path
+function Test-WindowsUpdatePath
 {
     <#
         .SYNOPSIS
