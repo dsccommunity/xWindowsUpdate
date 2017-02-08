@@ -24,7 +24,8 @@ test_script:
     - ps: |
         Invoke-AppveyorTestScriptTask `
             -Type 'Default' `
-            -MainModulePath $mainModuleFolder 
+            -MainModulePath $mainModuleFolder `
+            -ExcludeTag @()
     
 #---------------------------------# 
 #      deployment configuration   # 
