@@ -20,7 +20,7 @@ Data LocalizedData
         TestingEnsure = Testing whether hotfix is {0}.
         InvalidPath=The specified Path ({0}) is not in a valid format. Valid formats are local paths, UNC, and HTTP.
         InvalidBinaryType=The specified Path ({0}) does not appear to specify an MSU file and as such is not supported.
-        ValidateStandardArgumentsPathwasPath = Test-StandardArguments, Path was {0}.
+        TestStandardArgumentsPathWasPath = Test-StandardArguments, Path was {0}.
         NeedToDownloadFileFromSchemeDestinationWillBeDestName = Need to download file from {0}, destination will be {1}.
         TheUriSchemeWasUriScheme = The uri scheme was {0}.
         MountSharePath=Mount share to get media.
@@ -240,7 +240,7 @@ Function Test-StandardArguments
     )
     Set-StrictMode -Version latest
     
-    Trace-Message ($LocalizedData.ValidateStandardArgumentsPathwasPath -f $Path)
+    Trace-Message ($LocalizedData.TestStandardArgumentsPathWasPath -f $Path)
     $uri = $null
     try
     {
