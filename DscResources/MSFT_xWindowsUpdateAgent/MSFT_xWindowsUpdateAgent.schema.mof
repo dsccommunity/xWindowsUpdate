@@ -6,8 +6,8 @@ class MSFT_xWindowsUpdateAgent : OMI_BaseResource
     [write, Description("Indicates if the resource should ensure all Windows Updates are installed or if Automatic updates should be disabled."), ValueMap{"Security","Important","Optional"}, 
         Values{"Security","Important","Optional"}] String Category[];
     [Write, Description("Indicates if Windows update agent should notify about updates, see:https://msdn.microsoft.com/en-us/library/windows/desktop/aa385806%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396."), 
-        ValueMap{"Disabled","ScheduledInstallation"}, 
-        Values{"Disabled","ScheduledInstallation"}] String Notifications;
+        ValueMap{"Disabled","ScheduledInstallation","Scheduled installation"}, 
+        Values{"Disabled","ScheduledInstallation","Scheduled installation"}] String Notifications;
     [Required, Description("Indicates which source service Windows update agent should use.  Note: WSUS is not implemented in this resource."), ValueMap{"WindowsUpdate","MicrosoftUpdate","WSUS"}, 
         Values{"WindowsUpdate","MicrosoftUpdate","WSUS"}] String Source;
     [Write, Description("Indicates if the resource should trigger an update during consistency.")] boolean UpdateNow;

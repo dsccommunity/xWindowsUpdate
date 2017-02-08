@@ -217,6 +217,7 @@ function Set-WuaAuNotificationLevel
         default { throw 'Invalid notification level'}
     }
     $settings = Get-WuaAuSettings
+    $settings.NotificationLevel = $intNotificationLevel
     $settings.Save()
 }
 
@@ -321,7 +322,7 @@ function Get-TargetResource
         [System.String[]]
         $Category= @('Security'),
         
-        [ValidateSet("Disabled","ScheduledInstallation")]
+        [ValidateSet("Disabled","ScheduledInstallation","Scheduled installation")]
         [System.String]
         $Notifications,
         
@@ -402,7 +403,7 @@ function Set-TargetResource
         [System.String[]]
         $Category= @('Security'),
         
-        [ValidateSet("Disabled","ScheduledInstallation")]
+        [ValidateSet("Disabled","ScheduledInstallation","Scheduled installation")]
         [System.String]
         $Notifications,
         
@@ -508,7 +509,7 @@ function Test-TargetResource
         [System.String[]]
         $Category= @('Security'),
         
-        [ValidateSet("Disabled","ScheduledInstallation")]
+        [ValidateSet("Disabled","ScheduledInstallation","Scheduled installation")]
         [System.String]
         $Notifications,
         
@@ -556,7 +557,7 @@ function Test-TargetResourceProperties
         [System.String[]]
         $Category,
         
-        [ValidateSet("Disabled","ScheduledInstallation")]
+        [ValidateSet("Disabled","ScheduledInstallation","Scheduled installation")]
         [System.String]
         $Notifications,
         
