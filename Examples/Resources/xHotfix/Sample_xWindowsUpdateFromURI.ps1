@@ -3,7 +3,7 @@
  # as per the hotfix that you want to install
  #>
 
-Configuration DownloadHotfixFromURI
+Configuration Example
 {
     Import-DscResource -module xWindowsUpdate
     xHotfix m1
@@ -14,6 +14,3 @@ Configuration DownloadHotfixFromURI
     }
 
 }
-DownloadHotfixFromURI
-
-Start-DscConfiguration -path ./DownloadHotfixFromURI -wait -Verbose
