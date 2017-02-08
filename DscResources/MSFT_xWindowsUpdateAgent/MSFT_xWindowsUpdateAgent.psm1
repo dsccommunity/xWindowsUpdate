@@ -207,6 +207,19 @@ function Set-WuaAuNotificationLevel
         [string]
         $notificationLevel
     )
+    $intNotificationLevel = Get-WuaAuNotificationLevelInt -notificationLevel $notificationLevel
+
+    $settings = Get-WuaAuSettings
+    $settings.NotificationLevel = $intNotificationLevel
+    $settings.Save()
+}
+
+function Get-WuaAuNotificationLevelInt {
+    param(
+        [ValidateSet('Not Configured','Disabled','Notify before download','Notify before installation','Scheduled installation','ScheduledInstallation')]
+        [string]
+        $notificationLevel
+    )
     $intNotificationLevel =0
 
     switch -Regex ($notificationLevel) {
@@ -218,9 +231,7 @@ function Set-WuaAuNotificationLevel
         default { throw 'Invalid notification level'}
     }
 
-    $settings = Get-WuaAuSettings
-    $settings.NotificationLevel = $intNotificationLevel
-    $settings.Save()
+    return $intNotificationLevel
 }
 
 function Get-WuaSystemInfo
