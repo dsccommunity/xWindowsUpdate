@@ -1380,7 +1380,8 @@ try
                 }
             }
         }
-        Describe "$($Global:DSCResourceName)\get-WuaSearcher" {
+
+        Describe "$($Global:DSCResourceName)\Get-WuaSearcher" {
             
             $testCases =  @(
                @{ Category = @('Security','Optional','Important') }
@@ -1419,6 +1420,42 @@ try
             }
             
         }
+
+        Describe "$($Global:DSCResourceName)\Get-WuaAuNotificationLevelInt" {
+            
+            $testCases =@(
+                @{
+                    notificationLevel = 'Scheduled installation'
+                    intNotificationLevel = 4
+                }
+                @{
+                    notificationLevel = 'Scheduledinstallation'
+                    intNotificationLevel = 4
+                }
+                @{
+                    notificationLevel = 'Scheduled Installation'
+                    intNotificationLevel = 4
+                }
+                @{
+                    notificationLevel = 'ScheduledInstallation'
+                    intNotificationLevel = 4
+                }                
+                @{
+                    notificationLevel = 'Disabled'
+                    intNotificationLevel = 1
+                }                
+                @{
+                    notificationLevel = 'disabled'
+                    intNotificationLevel = 1
+                }                
+            )
+                
+            it "Should return <intNotificationLevel> for <notificationLevel>" -TestCases $testCases {
+                param($notificationLevel,$intNotificationLevel)
+                Get-WuaAuNotificationLevelInt -notificationLevel $notificationLevel | should be $intNotificationLevel
+            }            
+        }
+        
 
         # TODO: Pester Tests for any Helper Cmdlets
 
