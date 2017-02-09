@@ -104,7 +104,7 @@ the installation is skipped.
 ```powershell
 Configuration UpdateWindowsWithPath
 {
-    Node ‘NodeName’
+    Node 'NodeName'
     {
         xHotfix HotfixInstall
         {
@@ -124,7 +124,7 @@ a particular hotfix ID.
 ```powershell
 Configuration UpdateWindowsWithURI
 {
-    Node ‘NodeName’
+    Node 'NodeName'
     {
         xHotfix HotfixInstall
         {
