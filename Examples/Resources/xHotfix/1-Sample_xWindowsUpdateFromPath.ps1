@@ -1,6 +1,7 @@
 <#
- # This sample looks at installing a particular windows update. However, the path and ID properties can be changed 
- # as per the hotfix that you want to install
+    .EXAMPLE
+    This sample looks at installing a particular windows update. However, the path and ID properties can be changed 
+    as per the hotfix that you want to install
  #>
 
 Configuration Example
