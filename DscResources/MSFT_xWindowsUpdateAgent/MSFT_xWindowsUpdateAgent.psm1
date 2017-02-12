@@ -223,11 +223,14 @@ function Get-WuaAuNotificationLevelInt {
     $intNotificationLevel =0
 
     switch -Regex ($notificationLevel) {
-        '^Not\s*Configured$' { $intNotificationLevel = 0 }
         '^Disabled$' { $intNotificationLevel = 1 }
+        '^Scheduled\s*installation$' { $intNotificationLevel = 4 }
+        <#
+            Not currently used but here for when these cases are needed
+        '^Not\s*Configured$' { $intNotificationLevel = 0 }
         '^Notify\s*before\s*download$' { $intNotificationLevel = 2 }
         '^Notify\s*before\s*installation$' { $intNotificationLevel = 3 }
-        '^Scheduled\s*installation$' { $intNotificationLevel = 4 }
+        #>
         default { throw 'Invalid notification level'}
     }
 
