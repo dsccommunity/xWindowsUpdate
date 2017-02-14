@@ -1471,12 +1471,17 @@ try
                     "$string1|$string2|$string3" | out-file testdrive:\addservice2.txt -force
                 } -name AddService2
                 return $wuaService
-            }
+            } -Verifiable
             $testServiceId = 'fakeServiceId' 
+
             it "should not throw" {
                 {Add-WuaService -ServiceId $testServiceId} | should not throw
             }
-            
+
+            it "should have called the mock" {
+                Assert-VerifiableMocks
+            }
+
             it "should have created testdrive:\addservice2.txt" {
                 'testdrive:\AddService2.txt' | should exist
             }
@@ -1537,6 +1542,47 @@ try
                 Get-WuaSearchString -security:$security -optional:$optional -important:$important | should be $result
             }
         }
+        Describe "$($Global:DSCResourceName)\Get-WuaAuNotificationLevel" {
+            
+            $testCases =  @(
+               @{ 
+                   NotificationLevel = 0 
+                   Result = 'Not Configured'
+                }
+               @{ 
+                   NotificationLevel = 1 
+                   Result = 'Disabled'
+                }
+               @{ 
+                   NotificationLevel = 2 
+                   Result = 'Notify before download'
+                }
+               @{ 
+                   NotificationLevel = 3 
+                   Result = 'Notify before installation'
+                }
+               @{ 
+                   NotificationLevel = 4
+                   Result = 'Scheduled installation'
+                }
+            ) 
+            
+            Mock -CommandName Get-WuaAuSettings -MockWith {
+                $wuaService = [PSCustomObject] @{}
+                $wuaService | Add-Member -MemberType ScriptProperty -value {
+                    return [int] (Get-Content testdrive:\NotificationLevel.txt)
+                } -name NotificationLevel
+                return $wuaService
+            }
+
+            it "Should return <result> when notification level is <NotificationLevel>" -TestCases $testCases {
+                param([int]$NotificationLevel,$result)
+             
+                $NotificationLevel | Out-File testdrive:\NotificationLevel.txt -Force
+                Get-WuaAuNotificationLevel | should be $result
+            }
+        }
+        
     }
     
     #endregion
