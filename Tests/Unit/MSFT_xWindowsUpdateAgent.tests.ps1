@@ -1456,9 +1456,87 @@ try
             }            
         }
         
+        Describe "$($Global:DSCResourceName)\Get-WuaServiceManager" {
+            it "Should return an object with an AddService2 Method" {
+                Get-WuaServiceManager | Get-Member -Name AddService2 -MemberType Method | should not be null
+            }            
+        }
 
-        # TODO: Pester Tests for any Helper Cmdlets
+        Describe "$($Global:DSCResourceName)\Add-WuaService" {
+            
+            Mock -CommandName Get-WuaServiceManager -MockWith {
+                $wuaService = [PSCustomObject] @{}
+                $wuaService | Add-Member -MemberType ScriptMethod -value {
+                    param([string]$string1, [String]$string2, [String]$string3)
+                    "$string1|$string2|$string3" | out-file testdrive:\addservice2.txt -force
+                } -name AddService2
+                return $wuaService
+            }
+            $testServiceId = 'fakeServiceId' 
+            it "should not throw" {
+                {Add-WuaService -ServiceId $testServiceId} | should not throw
+            }
+            
+            it "should have created testdrive:\addservice2.txt" {
+                'testdrive:\AddService2.txt' | should exist
+            }
+            it "It should have called AddService2" {
+                Get-Content testdrive:\AddService2.txt | should be "$testServiceId|7|"
+            }            
+        }
 
+        Describe "$($Global:DSCResourceName)\Get-WuaSearchString" {
+
+            $testCases =@(
+                @{
+                    security = $false
+                    optional = $false
+                    important = $false
+                    result = "CategoryIds contains '0FA1201D-4330-4FA8-8AE9-B877473B6441' and IsHidden=0 and IsInstalled=0"
+                }                
+                @{
+                    security = $true
+                    optional = $false
+                    important = $false
+                    result = "CategoryIds contains '0FA1201D-4330-4FA8-8AE9-B877473B6441' and IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $true
+                    optional = $true
+                    important = $false
+                    result = "(IsAssigned=0 and IsHidden=0 and IsInstalled=0) or (CategoryIds contains '0FA1201D-4330-4FA8-8AE9-B877473B6441' and IsHidden=0 and IsInstalled=0)"
+                }
+                @{
+                    security = $true
+                    optional = $true
+                    important = $true
+                    result = "IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $false
+                    optional = $true
+                    important = $false
+                    result = "IsAssigned=0 and IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $false
+                    optional = $true
+                    important = $true
+                    result = "IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $false
+                    optional = $false
+                    important = $true
+                    result = "IsAssigned=1 and IsHidden=0 and IsInstalled=0"
+                }
+            )
+            $testServiceId = 'fakeServiceId' 
+            it "Calling with -security:<security> -optional:<optional> -important:<important> should result in expected query" -TestCases $testCases {
+                param($security, $optional, $important, $result)
+                Get-WuaSearchString -security:$security -optional:$optional -important:$important | should be $result
+            }
+        }
     }
     
     #endregion
