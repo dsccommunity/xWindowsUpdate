@@ -51,6 +51,8 @@ Please check out common DSC Resources
 
 ### xMicrosoftUpdate
 
+**Note:** `xMicrosoftUpdate` is deprecated.  Please use `xWindowsUpdateAgent`.
+
 * **Ensure**: Determines whether the Microsoft Update service should be
     enabled (ensure) or disabled (absent) in Windows Update.
 
@@ -62,6 +64,8 @@ Please check out common DSC Resources
     Chocolatey.
 * Fixed PSScriptAnalyzer issues.
 * Fixed common test breaks (markdown style, and example style).
+* Added CodeCov.io reporting
+* Deprecated xMicrosoftUpdate as it's functionality is replaced by xWindowsUpdateAgent
 
 ### 2.5.0.0
 

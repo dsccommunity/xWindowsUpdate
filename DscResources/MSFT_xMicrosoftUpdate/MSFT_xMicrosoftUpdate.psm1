@@ -1,3 +1,8 @@
+function Write-DeprecatedMessage
+{
+    Write-Warning -Message 'xMicrosoftUpdate is deprecated.  Please use xWindows Update Agent'
+}
+
 function Get-TargetResource
 {
     [CmdletBinding()]
@@ -10,6 +15,7 @@ function Get-TargetResource
         $Ensure
     )
 
+    Write-DeprecatedMessage
     Write-Verbose -Message "Getting Windows Update Agent services..."
     #Get the registered update services
     $UpdateServices = (New-Object -ComObject Microsoft.Update.ServiceManager).Services
@@ -45,7 +51,7 @@ function Set-TargetResource
         $Ensure
     )
 
-
+    Write-DeprecatedMessage
     Switch($Ensure)
     {
         'Present'
@@ -84,7 +90,6 @@ function Set-TargetResource
     }
 }
 
-
 function Test-TargetResource
 {
     # Verbose messages are written in Get.
@@ -100,6 +105,7 @@ function Test-TargetResource
     )
 
     #Output the result of Get-TargetResource function.
+    
     $Get = Get-TargetResource -Ensure $Ensure
 
     If($Ensure -eq $Get.Ensure)
