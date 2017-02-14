@@ -25,7 +25,9 @@ test_script:
         Invoke-AppveyorTestScriptTask `
             -Type 'Default' `
             -MainModulePath $mainModuleFolder `
-            -ExcludeTag @()
+            -ExcludeTag @() `
+            -CodeCoverage `
+            -CodeCovIo
     
 #---------------------------------# 
 #      deployment configuration   # 
