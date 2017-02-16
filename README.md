@@ -1,6 +1,10 @@
 # xWindowsUpdate Module
 
-[![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3ys/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xwindowsupdate/branch/master)
+master: [![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3ys/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xwindowsupdate/branch/master)
+[![codecov](https://codecov.io/gh/PowerShell/xWindowsUpdate/branch/master/graph/badge.svg)](https://codecov.io/gh/PowerShell/xWindowsUpdate)
+
+dev: [![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3ys/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/xwindowsupdate/branch/dev)
+[![codecov](https://codecov.io/gh/PowerShell/xWindowsUpdate/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/xWindowsUpdate)
 
 The **xWindowsUpdate** module contains the **xHotfix** and
 **xMicrosoftUpdate** DSC resources.  **xWindowsUpdate** installs a
