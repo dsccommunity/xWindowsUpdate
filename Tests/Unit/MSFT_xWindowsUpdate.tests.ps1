@@ -1,17 +1,17 @@
 <#
-.Synopsis
-   Unit tests for xWindowsUpdate
-.DESCRIPTION
-   Unit tests for  xWindowsUpdate
+    .Synopsis
+        Unit tests for xWindowsUpdate
+    .DESCRIPTION
+        Unit tests for  xWindowsUpdate
 
-.NOTES
-   Code in HEADER and FOOTER regions are standard and may be moved into DSCResource.Tools in
-   Future and therefore should not be altered if possible.
+    .NOTES
+        Code in HEADER and FOOTER regions are standard and may be moved into DSCResource.Tools in
+        Future and therefore should not be altered if possible.
 #>
 
 
-$Global:DSCModuleName      = 'xWindowsUpdate' # Example xNetworking
-$Global:DSCResourceName    = 'MSFT_xWindowsUpdate' # Example MSFT_xFirewall
+$Script:DSCModuleName      = 'xWindowsUpdate' # Example xNetworking
+$Script:DSCResourceName    = 'MSFT_xWindowsUpdate' # Example MSFT_xFirewall
 
 #region HEADER
 [String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
@@ -26,12 +26,10 @@ else
 }
 Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
 $TestEnvironment = Initialize-TestEnvironment `
-    -DSCModuleName $Global:DSCModuleName `
-    -DSCResourceName $Global:DSCResourceName `
+    -DSCModuleName $Script:DSCModuleName `
+    -DSCResourceName $Script:DSCResourceName `
     -TestType Unit
 #endregion
-
-# TODO: Other Optional Init Code Goes Here...
 
 # Begin Testing
 try
@@ -41,15 +39,10 @@ try
 
     # The InModuleScope command allows you to perform white-box unit testing on the internal
     # (non-exported) code of a Script Module.
-    InModuleScope $Global:DSCResourceName {
-
-        #region Pester Test Initialization
-
-        #endregion
-
+    InModuleScope $Script:DSCResourceName {
 
         #region Function Get-TargetResource
-        Describe "$($Global:DSCResourceName)\Get-TargetResource" {
+        Describe "$($Script:DSCResourceName)\Get-TargetResource" {
             Mock Get-HotFix -MockWith { return [PSCustomObject]@{HotFixId='KB123456'}} -Verifiable
             Context 'Get hotfix' {
 
@@ -72,7 +65,7 @@ try
                 }
             }
         }
-        Describe "$($Global:DSCResourceName)\Test-TargetResource" {
+        Describe "$($Script:DSCResourceName)\Test-TargetResource" {
             Context 'Hot fix exists' {
                 Mock Get-HotFix -MockWith { return [PSCustomObject]@{HotFixId='KB123456'}} -Verifiable
 
@@ -109,6 +102,4 @@ finally
     #region FOOTER
     Restore-TestEnvironment -TestEnvironment $TestEnvironment
     #endregion
-
-    # TODO: Other Optional Cleanup Code Goes Here...
 }
