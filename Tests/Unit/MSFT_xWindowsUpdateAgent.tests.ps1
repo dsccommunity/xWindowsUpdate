@@ -1355,6 +1355,10 @@ try
             @{
                 hresult = -2145107940
                 Name = 'RequestTimeout'
+            },
+            @{
+                hresult = -2145107921
+                Name = 'CabProcessingSuceededWithError'
             }
             )
             foreach($exception in $exceptions)
