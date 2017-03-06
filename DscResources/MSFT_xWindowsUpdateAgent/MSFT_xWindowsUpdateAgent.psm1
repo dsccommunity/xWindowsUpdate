@@ -152,7 +152,7 @@ function Get-WuaWrapper {
             # 0x8024402f    -2145107921    WU_E_PT_ECP_SUCCEEDED_WITH_ERRORS    External cab file processing completed with some errors.    wuerror.h
             -2145107921 {
                 # No retry needed
-                Write-Warning 'Got an error that CAB processing complete with some errors.'
+                Write-Warning 'Got an error that CAB processing completed with some errors.'
                 return $ExceptionReturnValue
             }
             default {
