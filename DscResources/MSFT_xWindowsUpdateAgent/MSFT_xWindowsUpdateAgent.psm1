@@ -149,6 +149,12 @@ function Get-WuaWrapper {
                 Write-Warning 'Got an error a request timed out (http status 408 or equivalent) when WU was communicating with the update service.  Handling the error.'
                 return $ExceptionReturnValue
             }
+            # 0x8024402f    -2145107921    WU_E_PT_ECP_SUCCEEDED_WITH_ERRORS    External cab file processing completed with some errors.    wuerror.h
+            -2145107921 {
+                # No retry needed
+                Write-Warning 'Got an error that CAB processing completed with some errors.'
+                return $ExceptionReturnValue
+            }
             default {
                 throw
             }
@@ -203,21 +209,35 @@ function Invoke-WuaInstallUpdates
 function Set-WuaAuNotificationLevel
 {
     param(
-        [ValidateSet('Not Configured','Disabled','Notify before download','Notify before installation','Scheduled installation')]
+        [ValidateSet('Not Configured','Disabled','Notify before download','Notify before installation','Scheduled installation','ScheduledInstallation')]
+        [string]
+        $notificationLevel
+    )
+    $intNotificationLevel = Get-WuaAuNotificationLevelInt -notificationLevel $notificationLevel
+
+    $settings = Get-WuaAuSettings
+    $settings.NotificationLevel = $intNotificationLevel
+    $settings.Save()
+}
+
+function Get-WuaAuNotificationLevelInt {
+    param(
+        [ValidateSet('Not Configured','Disabled','Notify before download','Notify before installation','Scheduled installation','ScheduledInstallation')]
         [string]
         $notificationLevel
     )
     $intNotificationLevel =0
-    switch ($notificationLevel) {
-        'Not Configured' { $intNotificationLevel = 0 }
-        'Disabled' { $intNotificationLevel = 1 }
-        'Notify before download' { $intNotificationLevel = 2 }
-        'Notify before installation' { $intNotificationLevel = 3 }
-        'Scheduled installation' { $intNotificationLevel = 4 }
+
+    switch -Regex ($notificationLevel) {
+        '^Not\s*Configured$' { $intNotificationLevel = 0 }
+        '^Disabled$' { $intNotificationLevel = 1 }
+        '^Notify\s*before\s*download$' { $intNotificationLevel = 2 }
+        '^Notify\s*before\s*installation$' { $intNotificationLevel = 3 }
+        '^Scheduled\s*installation$' { $intNotificationLevel = 4 }
         default { throw 'Invalid notification level'}
     }
-    $settings = Get-WuaAuSettings
-    $settings.Save()
+
+    return $intNotificationLevel
 }
 
 function Get-WuaSystemInfo
@@ -291,12 +311,12 @@ function Test-SearchResult
         $SearchResult
     )
     
-    if(!(@($SearchResult | get-member |select -ExpandProperty Name) -contains 'Updates'))
+    if(!(@($SearchResult | get-member |Select-Object -ExpandProperty Name) -contains 'Updates'))
     {
         Write-Verbose 'Did not find updates on SearchResult'
         return $false
     }
-    if(!(@(Get-Member -InputObject $SearchResult.Updates |select -ExpandProperty Name) -contains 'Count'))
+    if(!(@(Get-Member -InputObject $SearchResult.Updates |Select-Object -ExpandProperty Name) -contains 'Count'))
     {
         Write-Verbose 'Did not find count on updates on SearchResult'
         return $false
@@ -388,6 +408,8 @@ function Get-TargetResource
 
 function Set-TargetResource
 {
+    # should be [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "DSCMachineStatus")], but it doesn't work
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]   
     [CmdletBinding(SupportsShouldProcess=$true)]
     param
     (

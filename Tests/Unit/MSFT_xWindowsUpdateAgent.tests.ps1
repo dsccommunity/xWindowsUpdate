@@ -28,7 +28,7 @@ Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHel
 $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $Global:DSCModuleName `
     -DSCResourceName $Global:DSCResourceName `
-    -TestType Unit 
+    -TestType Unit
 #endregion
 
 # TODO: Other Optional Init Code Goes Here...
@@ -59,7 +59,7 @@ try
 
         $Global:mockedSearchResultWithoutUpdatesProperty = [PSCustomObject] @{
         }
-        
+
         $Global:mockedWuaDisableNotificationLevel = 'Disabled'
         $Global:mockedWuaOtherNotificationLevel = 'Notify before download'
         $Global:mockedWuaSystemInfoNoReboot = @{
@@ -105,22 +105,22 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $null
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
-                } -Verifiable                                    
+                } -Verifiable
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
-                
+
                 Mock Get-WuaServiceManager -MockWith { return $Global:mockedMicrosoftUpdateServiceManager}
-                    
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled -Source WindowsUpdate )
-                
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
                 it 'should return Category=$testCategories'{
                     $getResult.Category | should be $testCategories
@@ -152,29 +152,29 @@ try
                 it 'should return Service=MU'{
                     $getResult.Service | should be "MicrosoftUpdate"
                 }
-                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'null search result and disabled notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $null
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
-                } -Verifiable                                    
+                } -Verifiable
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
-                    
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled  -Source WindowsUpdate )
-                
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
                 it 'should return Category=$testCategories'{
                     $getResult.Category | should be $testCategories
@@ -206,29 +206,29 @@ try
                 it 'should return Service=WU'{
                     $getResult.Service | should be "WindowsUpdate"
                 }
-                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'no updates property and disabled notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdatesProperty
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
-                } -Verifiable                                    
+                } -Verifiable
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
-                    
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled -Source WindowsUpdate )
-                
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
 
                 it 'should return Category=$testCategories'{
@@ -258,31 +258,31 @@ try
                 it 'should return Notifications=Disabled'{
                     $getResult.Notifications | should be 'Disabled'
                 }
-                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'no updates and disabled notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
-                } -Verifiable                                    
+                } -Verifiable
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
-                    
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled -Source WindowsUpdate )
-                
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should return Category=$testCategories'{
                     $getResult.Category | should be $testCategories
                 }
@@ -310,31 +310,31 @@ try
                 it 'should return Notifications=Disabled'{
                     $getResult.Notifications | should be 'Disabled'
                 }
-                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'no updates , disabled notification, and reboot required' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
-                } -Verifiable                                    
+                } -Verifiable
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoReboot
                 } -Verifiable
-                    
+
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Notifications Disabled -Source WindowsUpdate )
-                
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should return Category=$testCategories'{
                     $getResult.Category | should be $testCategories
                 }
@@ -358,35 +358,35 @@ try
                 it 'should return 0 update not installed '{
                     $getResult.TotalUpdatesNotInstalled | should be 0
                 }
-                
+
                 it 'should return reboot requied $true' {
                     $getResult.RebootRequired | should be $true
                 }
-                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'updates and disable notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
-                    
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories  -Source WindowsUpdate)
-                
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should return Category=$testCategories'{
                     $getResult.Category | should be $testCategories
                 }
@@ -410,7 +410,7 @@ try
                 it 'should return 1 update not installed '{
                     $getResult.TotalUpdatesNotInstalled | should be 1
                 }
-                
+
                 it 'should return reboot requied $false' {
                     $getResult.RebootRequired | should be $false
                 }
@@ -418,27 +418,27 @@ try
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'updates and other notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaOtherNotificationLevel
                 } -Verifiable
-                    
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
                 $getResult = (Get-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories  -Source WindowsUpdate)
-                
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should return Category=$testCategories'{
                     $getResult.Category | should be $testCategories
                 }
@@ -462,7 +462,7 @@ try
                 it 'should return 1 update not installed '{
                     $getResult.TotalUpdatesNotInstalled | should be 1
                 }
-                
+
                 it 'should return reboot requied $false' {
                     $getResult.RebootRequired | should be $false
                 }
@@ -470,7 +470,7 @@ try
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
         }
         #endregion
 
@@ -483,7 +483,7 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -493,24 +493,24 @@ try
                 } -Verifiable
 
                 it 'should return $true' {
-                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Source MicrosoftUpdate  -verbose) | should be $false    
+                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Source MicrosoftUpdate  -verbose) | should be $false
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }         
-               
+            }
+
             Context 'Ensure UpToDate with no updates and disabled notification and mu service' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -522,24 +522,24 @@ try
                 Mock Get-WuaServiceManager -MockWith { return $Global:mockedMicrosoftUpdateServiceManager}
 
                 it 'should return $true' {
-                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Source MicrosoftUpdate  -verbose) | should be $true    
+                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -Source MicrosoftUpdate  -verbose) | should be $true
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }              
-            
+            }
+
             Context 'Ensure UpToDate with no updates and disabled notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -549,23 +549,23 @@ try
                 } -Verifiable
 
                 it 'should return $true' {
-                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories  -verbose  -Source WindowsUpdate) | should be $true    
+                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories  -verbose  -Source WindowsUpdate) | should be $true
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure UpToDate with no updates, disabled notification and reboot requirde' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -575,179 +575,179 @@ try
                 } -Verifiable
 
                 it 'should return $false' {
-                    (Test-TargetResource  -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -verbose  -Source WindowsUpdate) | should be $false    
+                    (Test-TargetResource  -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -verbose  -Source WindowsUpdate) | should be $false
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure UpToDate with updates and disabled notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
-                
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
-                    
+
                 it 'should return $false' {
-                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -verbose  -Source WindowsUpdate) | should be $false    
+                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -Category $testCategories -verbose  -Source WindowsUpdate) | should be $false
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure Disable with updates and disable notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
-                } 
-                
+                }
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
-                
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
-                } 
-    
-                it 'should return $true' {
-                    (Test-TargetResource  -IsSingleInstance 'yes' -UpdateNow $false -Notifications Disabled -verbose  -Source WindowsUpdate) | should be $true    
                 }
-                    
+
+                it 'should return $true' {
+                    (Test-TargetResource  -IsSingleInstance 'yes' -UpdateNow $false -Notifications Disabled -verbose  -Source WindowsUpdate) | should be $true
+                }
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should not have called the Get-WuaSystemInfo mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0
                 }
 
                 it 'should not have called the get-wuasearcher mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure Disable with updates and other notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
-                } 
-                
+                }
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaOtherNotificationLevel
                 } -Verifiable
-                    
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
-                } 
+                }
 
                 it 'should return $false' {
-                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $false -Notifications Disabled -verbose  -Source WindowsUpdate) | should be $false    
+                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $false -Notifications Disabled -verbose  -Source WindowsUpdate) | should be $false
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
 
                 it 'should not have called the Get-WuaSystemInfo mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0
                 }
 
                 it 'should not have called the get-wuasearcher mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
 
             Context 'Ensure UpToDate with updates and other notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaOtherNotificationLevel
                 } -Verifiable
-                    
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
 
                 it 'should return $true' {
-                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate) | should be $false    
+                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate) | should be $false
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }                             
+            }
             Context 'Ensure UpdateNow = $false with updates and other notification' {
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
                 }
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaOtherNotificationLevel
                 } -Verifiable
-                    
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
-                } 
+                }
 
                 it 'should return $true' {
-                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $false -verbose -Category $testCategories -Source WindowsUpdate) | should be $true    
+                    (Test-TargetResource -IsSingleInstance 'yes' -UpdateNow $false -verbose -Category $testCategories -Source WindowsUpdate) | should be $true
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
 
                 it 'should not have called the Get-WuaSystemInfo mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0
                 }
 
                 it 'should not have called the get-wuasearcher mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }                             
+            }
         }
         #endregion
 
@@ -758,7 +758,7 @@ try
             Mock New-object -MockWith {} -ParameterFilter {$ComObject -ne $null}
             Context 'Ensure UpToDate with null search results, disabled notification, and reboot required' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -767,7 +767,7 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $null
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -775,9 +775,9 @@ try
                 Mock Get-WuaRebootRequired -MockWith {
                     return $true
                 } -Verifiable
-                
-                Mock Invoke-WuaDownloadUpdates -MockWith {} 
-                Mock Invoke-WuaInstallUpdates -MockWith {} 
+
+                Mock Invoke-WuaDownloadUpdates -MockWith {}
+                Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
                 it 'should not Throw' {
@@ -786,14 +786,14 @@ try
                     catch
                     {
                         $_ | should be $null
-                    }    
+                    }
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0 -ParameterFilter {$ComObject -ne $null}                    
+                    Assert-MockCalled -CommandName New-Object -Times 0 -ParameterFilter {$ComObject -ne $null}
                 }
-                
+
                 it 'should not have changed wua' {
                     Assert-MockCalled -CommandName Invoke-WuaDownloadUpdates -Times 0
                     Assert-MockCalled -CommandName Invoke-WuaInstallUpdates -Times 0
@@ -803,14 +803,14 @@ try
                 it 'Should have triggered a reboot'{
                     $global:DSCMachineStatus | should be 1
                 }
-                                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure UpToDate with no updates, mu and disabled notification' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -819,7 +819,7 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -828,20 +828,20 @@ try
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
                 mock Add-WuaService -MockWith {} -Verifiable
-                mock Remove-WuaService -MockWith {} 
-                Mock Invoke-WuaDownloadUpdates -MockWith {} 
-                Mock Invoke-WuaInstallUpdates -MockWith {} 
+                mock Remove-WuaService -MockWith {}
+                Mock Invoke-WuaDownloadUpdates -MockWith {}
+                Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
                 it 'should not Throw' {
-                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source MicrosoftUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source MicrosoftUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should not have changed wua' {
                     Assert-MockCalled -CommandName Invoke-WuaDownloadUpdates -Times 0
                     Assert-MockCalled -CommandName Invoke-WuaInstallUpdates -Times 0
@@ -851,15 +851,15 @@ try
                 it 'Should not have triggered a reboot'{
                     $global:DSCMachineStatus | should be $null
                 }
-                                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }        
-            
+            }
+
             Context 'Ensure UpToDate with no updates, mu and disabled notification' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -868,7 +868,7 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -876,21 +876,21 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
-                mock Add-WuaService -MockWith {} 
-                mock Remove-WuaService -MockWith {} 
-                Mock Invoke-WuaDownloadUpdates -MockWith {} 
-                Mock Invoke-WuaInstallUpdates -MockWith {} 
+                mock Add-WuaService -MockWith {}
+                mock Remove-WuaService -MockWith {}
+                Mock Invoke-WuaDownloadUpdates -MockWith {}
+                Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
                 it 'should not Throw' {
-                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should not have changed wua' {
                     Assert-MockCalled -CommandName Invoke-WuaDownloadUpdates -Times 0
                     Assert-MockCalled -CommandName Invoke-WuaInstallUpdates -Times 0
@@ -902,15 +902,15 @@ try
                 it 'Should not have triggered a reboot'{
                     $global:DSCMachineStatus | should be $null
                 }
-                                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            } 
+            }
 
             Context 'Ensure UpToDate with no updates, mu and disabled notification' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -919,7 +919,7 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -927,23 +927,23 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
-                
-                Mock Get-WuaServiceManager -MockWith { return $Global:mockedMicrosoftUpdateServiceManager} -Verifiable 
-                mock Add-WuaService -MockWith {} 
+
+                Mock Get-WuaServiceManager -MockWith { return $Global:mockedMicrosoftUpdateServiceManager} -Verifiable
+                mock Add-WuaService -MockWith {}
                 mock Remove-WuaService -MockWith {} -Verifiable
-                Mock Invoke-WuaDownloadUpdates -MockWith {} 
-                Mock Invoke-WuaInstallUpdates -MockWith {} 
+                Mock Invoke-WuaDownloadUpdates -MockWith {}
+                Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
                 it 'should not Throw' {
-                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should not have changed wua' {
                     Assert-MockCalled -CommandName Invoke-WuaDownloadUpdates -Times 0
                     Assert-MockCalled -CommandName Invoke-WuaInstallUpdates -Times 0
@@ -954,15 +954,15 @@ try
                 it 'Should not have triggered a reboot'{
                     $global:DSCMachineStatus | should be $null
                 }
-                                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            } 
-                        
+            }
+
             Context 'Ensure UpToDate with no updates and disabled notification' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -971,7 +971,7 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -979,20 +979,20 @@ try
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
-                
-                Mock Invoke-WuaDownloadUpdates -MockWith {} 
-                Mock Invoke-WuaInstallUpdates -MockWith {} 
+
+                Mock Invoke-WuaDownloadUpdates -MockWith {}
+                Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
                 it 'should not Throw' {
-                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories  -Source WindowsUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories  -Source WindowsUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                
+
                 it 'should not have changed wua' {
                     Assert-MockCalled -CommandName Invoke-WuaDownloadUpdates -Times 0
                     Assert-MockCalled -CommandName Invoke-WuaInstallUpdates -Times 0
@@ -1002,14 +1002,14 @@ try
                 it 'Should not have triggered a reboot'{
                     $global:DSCMachineStatus | should be $null
                 }
-                                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure UpToDate with no updates, disabled notification and reboot required' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -1018,7 +1018,7 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithoutUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
@@ -1027,19 +1027,19 @@ try
                     return $Global:mockedWuaSystemInfoReboot
                 } -Verifiable
 
-                Mock Invoke-WuaDownloadUpdates -MockWith {} 
-                Mock Invoke-WuaInstallUpdates -MockWith {} 
+                Mock Invoke-WuaDownloadUpdates -MockWith {}
+                Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
                 it 'should return $false' {
-                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories  -Source WindowsUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories  -Source WindowsUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should not have changed wua' {
                     Assert-MockCalled -CommandName Invoke-WuaDownloadUpdates -Times 0
                     Assert-MockCalled -CommandName Invoke-WuaInstallUpdates -Times 0
@@ -1049,14 +1049,14 @@ try
                 it 'Should have triggered a reboot'{
                     $global:DSCMachineStatus | should be 1
                 }
-                                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure UpToDate with updates and disabled notification' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -1065,11 +1065,11 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
-                
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
@@ -1077,17 +1077,17 @@ try
                 Mock Invoke-WuaDownloadUpdates -MockWith {} -Verifiable
                 Mock Invoke-WuaInstallUpdates -MockWith {} -Verifiable
                 Mock Set-WuaAuNotificationLevel -MockWith {}
-                    
+
                 it 'should return $false' {
-                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw    
-                }
-                    
-                it 'should not have called the new-object mock'{
-                    # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw
                 }
 
-                                
+                it 'should not have called the new-object mock'{
+                    # verify we mocked all WUA calls correctly
+                    Assert-MockCalled -CommandName New-Object -Times 0
+                }
+
+
                 it 'should not have changed wua notification' {
                     Assert-MockCalled -CommandName Set-WuaAuNotificationLevel -Times 0
                 }
@@ -1095,14 +1095,14 @@ try
                 it 'Should not have triggered a reboot'{
                     $global:DSCMachineStatus | should be $null
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure UpToDate with updates and disabled notification with reboot after install' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -1111,11 +1111,11 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
-                
+
                 Mock Get-WuaSystemInfo -MockWith {
                     Set-StrictMode -Off
                     if(!$callCount)
@@ -1139,16 +1139,16 @@ try
                 Mock Invoke-WuaDownloadUpdates -MockWith {} -Verifiable
                 Mock Invoke-WuaInstallUpdates -MockWith {} -Verifiable
                 Mock Set-WuaAuNotificationLevel -MockWith {}
-                    
+
                 it 'should return $false' {
-                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should not have changed wua notification' {
                     Assert-MockCalled -CommandName Set-WuaAuNotificationLevel -Times 0
                 }
@@ -1156,14 +1156,14 @@ try
                 it 'Should not have triggered a reboot'{
                     $global:DSCMachineStatus | should be $null
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
             Context 'Ensure Disable with updates and disable notification' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -1171,38 +1171,38 @@ try
 
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
-                } 
-                
+                }
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaDisableNotificationLevel
                 } -Verifiable
-                
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
-                } 
+                }
 
-                Mock Invoke-WuaDownloadUpdates -MockWith {} 
-                Mock Invoke-WuaInstallUpdates -MockWith {} 
+                Mock Invoke-WuaDownloadUpdates -MockWith {}
+                Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
-    
+
                 it 'should not throw' {
-                    {Set-TargetResource -IsSingleInstance 'yes' -notifications 'Disabled' -UpdateNow $false -Source WindowsUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes' -notifications 'Disabled' -UpdateNow $false -Source WindowsUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
 
                 it 'should not have called the Get-WuaSystemInfo mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0
                 }
 
                 it 'should not have called the get-wuasearcher mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0
                 }
 
                 it 'should not have changed wua' {
@@ -1214,58 +1214,58 @@ try
                 it 'Should not have triggered a reboot'{
                     $global:DSCMachineStatus | should be $null
                 }
-                                
+
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
-           
+            }
+
             Context 'Ensure Disable with updates and other notification' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
                 }
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
-                } 
-                
+                }
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaOtherNotificationLevel
                 } -Verifiable
 
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
-                } 
-                    
-                Mock Invoke-WuaDownloadUpdates -MockWith {} 
-                Mock Invoke-WuaInstallUpdates -MockWith {} 
+                }
+
+                Mock Invoke-WuaDownloadUpdates -MockWith {}
+                Mock Invoke-WuaInstallUpdates -MockWith {}
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
                 it 'should not throw' {
-                    {Set-TargetResource -IsSingleInstance 'yes' -notifications 'Disabled'  -UpdateNow $false -Source WindowsUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes' -notifications 'Disabled'  -UpdateNow $false -Source WindowsUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
 
                 it 'should not have called the Get-WuaSystemInfo mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSystemInfo -Times 0
                 }
 
                 it 'should not have called the get-wuasearcher mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0                    
+                    Assert-MockCalled -CommandName Get-WuaSearcher -Times 0
                 }
 
                 it 'should have set the notification level' {
                     Assert-MockCalled -CommandName Set-WuaAuNotificationLevel -Times 1 -ParameterFilter {$NotificationLevel -eq 'Disabled'}
-                }                                
-                
+                }
+
                 it 'should not have changed wua' {
                     Assert-MockCalled -CommandName Invoke-WuaDownloadUpdates -Times 0
                     Assert-MockCalled -CommandName Invoke-WuaInstallUpdates -Times 0
@@ -1278,11 +1278,11 @@ try
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
+            }
 
             Context 'Ensure UpToDate with updates and other notification' {
                 BeforeAll {
-                    $global:DSCMachineStatus = $null                
+                    $global:DSCMachineStatus = $null
                 }
                 AfterAll {
                     $global:DSCMachineStatus = $null
@@ -1290,11 +1290,11 @@ try
                 Mock  Get-WuaSearcher -MockWith {
                     return $Global:mockedSearchResultWithUpdate
                 } -Verifiable
-                
+
                 Mock  Get-WuaAuNotificationLevel -MockWith {
                     return $Global:mockedWuaOtherNotificationLevel
                 } -Verifiable
-                    
+
                 Mock Get-WuaSystemInfo -MockWith {
                     return $Global:mockedWuaSystemInfoNoReboot
                 } -Verifiable
@@ -1304,14 +1304,14 @@ try
                 Mock Set-WuaAuNotificationLevel -MockWith {}
 
                 it 'should not throw' {
-                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw    
+                    {Set-TargetResource -IsSingleInstance 'yes'  -UpdateNow $true -verbose -Category $testCategories -Source WindowsUpdate} | should not throw
                 }
-                    
+
                 it 'should not have called the new-object mock'{
                     # verify we mocked all WUA calls correctly
-                    Assert-MockCalled -CommandName New-Object -Times 0                    
+                    Assert-MockCalled -CommandName New-Object -Times 0
                 }
-                                
+
                 it 'should not have changed wua notification' {
                     Assert-MockCalled -CommandName Set-WuaAuNotificationLevel -Times 0
                 }
@@ -1323,11 +1323,11 @@ try
                 it 'should have called the mock' {
                     Assert-VerifiableMocks
                 }
-            }            
-                        
+            }
+
         }
         #endregion
-        
+
         Describe "$($Global:DSCResourceName)\Get-WuaWrapper" {
             it 'should return value based passed parameter' {
                 Get-WuaWrapper -tryBlock {
@@ -1337,7 +1337,7 @@ try
                     )
                     return $a+$b
                 } -argumentList @(1,2) | should be 3
-            } 
+            }
             it 'should throw unexpected exception' {
                 $exceptionMessage = 'foobar'
                 {Get-WuaWrapper -tryBlock {
@@ -1355,7 +1355,11 @@ try
             @{
                 hresult = -2145107940
                 Name = 'RequestTimeout'
-            }            
+            },
+            @{
+                hresult = -2145107921
+                Name = 'CabProcessingSuceededWithError'
+            }
             )
             foreach($exception in $exceptions)
             {
@@ -1380,8 +1384,9 @@ try
                 }
             }
         }
-        Describe "$($Global:DSCResourceName)\get-WuaSearcher" {
-            
+
+        Describe "$($Global:DSCResourceName)\Get-WuaSearcher" {
+
             $testCases =  @(
                @{ Category = @('Security','Optional','Important') }
                @{ Category = @('Security','Optional') }
@@ -1390,18 +1395,18 @@ try
                @{ Category = @('Optional') }
                @{ Category = @('Important') }
                @{ Category = @() }
-            ) 
+            )
             Context 'Verify wua call works' {
-                it "Should get a searcher" -skip -TestCases $testCases {
+                it "Should get a searcher - Category: <Category>" -skip -TestCases $testCases {
                     param([string[]]$category)
-                    $searcher = (get-wuaSearcher -category $category -verbose) 
-                    $searcher | get-member 
+                    $searcher = (get-wuaSearcher -category $category -verbose)
+                    $searcher | get-member
                     $searcher.GetType().FullName | should be "System.__ComObject"
                 }
             }
             Context 'verify call flow' {
-                mock get-wuaWrapper -MockWith {return "testResult"} 
-                it "should call get-wuasearchstring" -TestCases $testCases {
+                mock get-wuaWrapper -MockWith {return "testResult"}
+                it "should call get-wuasearchstring - Category: <Category>" -TestCases $testCases {
                     param([string[]]$category)
                     $global:ImportantExpected = ($category -contains 'Important')
                     $global:SecurityExpected = ($category -contains 'Security')
@@ -1413,19 +1418,179 @@ try
                     }
                     get-wuaSearcher -category $category | should be "testResult"
                     #Assert-MockCalled -CommandName get-wuaSearchString -Times 1
-                    Assert-MockCalled -CommandName get-wuaSearchString -Times 1 
+                    Assert-MockCalled -CommandName get-wuaSearchString -Times 1
                     Assert-MockCalled -CommandName get-wuaWrapper -Times 1 -ParameterFilter {$ArgumentList -eq @('mockedSearchString')}
                 }
             }
-            
+
         }
 
-        # TODO: Pester Tests for any Helper Cmdlets
+        Describe "$($Global:DSCResourceName)\Get-WuaAuNotificationLevelInt" {
+
+            $testCases =@(
+                @{
+                    notificationLevel = 'Scheduled installation'
+                    intNotificationLevel = 4
+                }
+                @{
+                    notificationLevel = 'Scheduledinstallation'
+                    intNotificationLevel = 4
+                }
+                @{
+                    notificationLevel = 'Scheduled Installation'
+                    intNotificationLevel = 4
+                }
+                @{
+                    notificationLevel = 'ScheduledInstallation'
+                    intNotificationLevel = 4
+                }
+                @{
+                    notificationLevel = 'Disabled'
+                    intNotificationLevel = 1
+                }
+                @{
+                    notificationLevel = 'disabled'
+                    intNotificationLevel = 1
+                }
+            )
+
+            it "Should return <intNotificationLevel> for <notificationLevel>" -TestCases $testCases {
+                param($notificationLevel,$intNotificationLevel)
+                Get-WuaAuNotificationLevelInt -notificationLevel $notificationLevel | should be $intNotificationLevel
+            }
+        }
+
+        Describe "$($Global:DSCResourceName)\Get-WuaServiceManager" {
+            it "Should return an object with an AddService2 Method" {
+                Get-WuaServiceManager | Get-Member -Name AddService2 -MemberType Method | should not be null
+            }
+        }
+
+        Describe "$($Global:DSCResourceName)\Add-WuaService" {
+
+            Mock -CommandName Get-WuaServiceManager -MockWith {
+                $wuaService = [PSCustomObject] @{}
+                $wuaService | Add-Member -MemberType ScriptMethod -value {
+                    param([string]$string1, [String]$string2, [String]$string3)
+                    "$string1|$string2|$string3" | out-file testdrive:\addservice2.txt -force
+                } -name AddService2
+                return $wuaService
+            } -Verifiable
+            $testServiceId = 'fakeServiceId'
+
+            it "should not throw" {
+                {Add-WuaService -ServiceId $testServiceId} | should not throw
+            }
+
+            it "should have called the mock" {
+                Assert-VerifiableMocks
+            }
+
+            it "should have created testdrive:\addservice2.txt" {
+                'testdrive:\AddService2.txt' | should exist
+            }
+            it "It should have called AddService2" {
+                Get-Content testdrive:\AddService2.txt | should be "$testServiceId|7|"
+            }
+        }
+
+        Describe "$($Global:DSCResourceName)\Get-WuaSearchString" {
+
+            $testCases =@(
+                @{
+                    security = $false
+                    optional = $false
+                    important = $false
+                    result = "CategoryIds contains '0FA1201D-4330-4FA8-8AE9-B877473B6441' and IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $true
+                    optional = $false
+                    important = $false
+                    result = "CategoryIds contains '0FA1201D-4330-4FA8-8AE9-B877473B6441' and IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $true
+                    optional = $true
+                    important = $false
+                    result = "(IsAssigned=0 and IsHidden=0 and IsInstalled=0) or (CategoryIds contains '0FA1201D-4330-4FA8-8AE9-B877473B6441' and IsHidden=0 and IsInstalled=0)"
+                }
+                @{
+                    security = $true
+                    optional = $true
+                    important = $true
+                    result = "IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $false
+                    optional = $true
+                    important = $false
+                    result = "IsAssigned=0 and IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $false
+                    optional = $true
+                    important = $true
+                    result = "IsHidden=0 and IsInstalled=0"
+                }
+                @{
+                    security = $false
+                    optional = $false
+                    important = $true
+                    result = "IsAssigned=1 and IsHidden=0 and IsInstalled=0"
+                }
+            )
+            $testServiceId = 'fakeServiceId'
+            it "Calling with -security:<security> -optional:<optional> -important:<important> should result in expected query" -TestCases $testCases {
+                param($security, $optional, $important, $result)
+                Get-WuaSearchString -security:$security -optional:$optional -important:$important | should be $result
+            }
+        }
+        Describe "$($Global:DSCResourceName)\Get-WuaAuNotificationLevel" {
+
+            $testCases =  @(
+               @{
+                   NotificationLevel = 0
+                   Result = 'Not Configured'
+                }
+               @{
+                   NotificationLevel = 1
+                   Result = 'Disabled'
+                }
+               @{
+                   NotificationLevel = 2
+                   Result = 'Notify before download'
+                }
+               @{
+                   NotificationLevel = 3
+                   Result = 'Notify before installation'
+                }
+               @{
+                   NotificationLevel = 4
+                   Result = 'Scheduled installation'
+                }
+            )
+
+            Mock -CommandName Get-WuaAuSettings -MockWith {
+                $wuaService = [PSCustomObject] @{}
+                $wuaService | Add-Member -MemberType ScriptProperty -value {
+                    return [int] (Get-Content testdrive:\NotificationLevel.txt)
+                } -name NotificationLevel
+                return $wuaService
+            }
+
+            it "Should return <result> when notification level is <NotificationLevel>" -TestCases $testCases {
+                param([int]$NotificationLevel,$result)
+
+                $NotificationLevel | Out-File testdrive:\NotificationLevel.txt -Force
+                Get-WuaAuNotificationLevel | should be $result
+            }
+        }
 
     }
-    
+
     #endregion
-    
+
 }
 finally
 {

@@ -1,6 +1,6 @@
 @{
 # Version number of this module.
-ModuleVersion = '2.5.0.0'
+ModuleVersion = '2.6.0.0'
 
 # ID used to uniquely identify this module
 GUID = 'a9cba250-ea73-4d82-b31b-7e58cc50ffd1'
@@ -47,7 +47,12 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Added xWindowsUpdateAgent
+        ReleaseNotes = '* Converted appveyor.yml to install Pester from PSGallery instead of from
+    Chocolatey.
+* Fixed PSScriptAnalyzer issues.
+* Fixed common test breaks (markdown style, and example style).
+* Added CodeCov.io reporting
+* Deprecated xMicrosoftUpdate as it"s functionality is replaced by xWindowsUpdateAgent
 
 '
 
@@ -55,4 +60,5 @@ PrivateData = @{
 
 } # End of PrivateData hashtable
 }
+
 
