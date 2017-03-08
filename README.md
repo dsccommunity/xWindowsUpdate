@@ -64,6 +64,8 @@ Please check out common DSC Resources
 
 ### Unreleased
 
+### 2.6.0.0
+
 * Converted appveyor.yml to install Pester from PSGallery instead of from
     Chocolatey.
 * Fixed PSScriptAnalyzer issues.
