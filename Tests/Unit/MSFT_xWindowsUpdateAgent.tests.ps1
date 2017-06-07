@@ -1639,6 +1639,30 @@ try
                 {Test-TargetResourceProperties @PropertiesToTest} | Should Throw
             }
         }
+
+        Describe "$($Global:DSCResourceName)\Get-WuaAuNotificationLevelInt" {
+            It 'Gets int for notification level of Not Configured' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Not Configured' | Should be 0
+            }
+            It 'Gets int for notification level of Disabled' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Disabled' | Should be 1
+            }
+            It 'Gets int for notification level of Notify before download' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Notify before download' | Should be 2
+            }
+            It 'Gets int for notification level of Notify before installation' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Notify before installation' | Should be 3
+            }
+            It 'Gets int for notification level of Scheduled Installation' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Scheduled Installation' | Should be 4
+            }
+            It 'Gets int for notification level of ScheduledInstallation' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'ScheduledInstallation' | Should be 4
+            }
+            It 'Gets int for notification level when nothing is provided' {
+                { Get-WuaAuNotificationLevelInt } | Should Throw
+            }
+        }
     }
 
     #endregion
