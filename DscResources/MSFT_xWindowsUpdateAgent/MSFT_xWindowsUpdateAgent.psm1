@@ -399,7 +399,7 @@ function Get-TargetResource
                         TotalUpdatesNotInstalled = $totalUpdatesNotInstalled 
                         RebootRequired = $rebootRequired
                         Notifications = $notificationLevel
-                        Service = $SourceReturn
+                        Source = $SourceReturn
                         UpdateNow = $UpdateNowReturn
                     }
     $returnValue
