@@ -42,7 +42,7 @@ try
     # The InModuleScope command allows you to perform white-box unit testing on the internal
     # (non-exported) code of a Script Module.
     InModuleScope $Global:DSCResourceName {
-
+        
         #region Pester Test Initialization
         $Global:mockedSearchResultWithUpdate = [PSCustomObject] @{
             Updates = @{
@@ -149,8 +149,8 @@ try
                 it 'should return UpdateNome=$true'{
                     $getResult.UpdateNow | should be $true
                 }
-                it 'should return Service=MU'{
-                    $getResult.Service | should be "MicrosoftUpdate"
+                it 'should return Source=MU'{
+                    $getResult.Source | should be "MicrosoftUpdate"
                 }
 
                 it 'should have called the mock' {
@@ -203,8 +203,8 @@ try
                 it 'should return UpdateNome=$true'{
                     $getResult.UpdateNow | should be $true
                 }
-                it 'should return Service=WU'{
-                    $getResult.Service | should be "WindowsUpdate"
+                it 'should return Source=WU'{
+                    $getResult.Source | should be "WindowsUpdate"
                 }
 
                 it 'should have called the mock' {
