@@ -1587,6 +1587,58 @@ try
             }
         }
 
+        Describe "$($Global:DSCResourceName)\Test-TargetResourceProperties" {
+            Mock -CommandName Write-Warning -MockWith {} -Verifiable
+            Mock -CommandName Write-Verbose -MockWith {}
+
+            It 'Calls write-warning when no categories are passed' {
+                $PropertiesToTest = @{
+                    IsSingleInstance = 'Yes'
+                    Notifications = 'Disabled'
+                    Source = 'WindowsUpdate'
+                    Category = @()
+                    UpdateNow = $True
+                }
+                Test-TargetResourceProperties @PropertiesToTest
+
+                Assert-MockCalled -CommandName Write-Warning -Times 1 -Exactly -Scope It
+            }
+            
+            It 'Calls write-warning when Important updates are requested but not Security updates' {
+                $PropertiesToTest = @{
+                    IsSingleInstance = 'Yes'
+                    Notifications = 'Disabled'
+                    Source = 'WindowsUpdate'
+                    Category = 'Important'
+                }
+                Test-TargetResourceProperties @PropertiesToTest
+
+                Assert-MockCalled -CommandName Write-Warning -Times 1 -Exactly -Scope It
+            }
+
+            It 'Calls write-warning when Optional updates are requested but not Security updates' {
+                $PropertiesToTest = @{
+                    IsSingleInstance = 'Yes'
+                    Notifications = 'Disabled'
+                    Source = 'WindowsUpdate'
+                    Category = 'Optional'
+                    UpdateNow = $True
+                }
+                Test-TargetResourceProperties @PropertiesToTest
+
+                Assert-MockCalled -CommandName Write-Verbose -Times 1 -Exactly -Scope It
+            }
+
+            It 'Throws an exception when passed WSUS as a source' {
+                $PropertiesToTest = @{
+                    IsSingleInstance = 'Yes'
+                    Category = 'Security'
+                    Notifications = 'Disabled'
+                    Source = 'WSUS'
+                }
+                {Test-TargetResourceProperties @PropertiesToTest} | Should Throw
+            }
+        }
     }
 
     #endregion
