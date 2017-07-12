@@ -42,7 +42,7 @@ try
     # The InModuleScope command allows you to perform white-box unit testing on the internal
     # (non-exported) code of a Script Module.
     InModuleScope $Global:DSCResourceName {
-
+        
         #region Pester Test Initialization
         $Global:mockedSearchResultWithUpdate = [PSCustomObject] @{
             Updates = @{
@@ -149,8 +149,8 @@ try
                 it 'should return UpdateNome=$true'{
                     $getResult.UpdateNow | should be $true
                 }
-                it 'should return Service=MU'{
-                    $getResult.Service | should be "MicrosoftUpdate"
+                it 'should return Source=MU'{
+                    $getResult.Source | should be "MicrosoftUpdate"
                 }
 
                 it 'should have called the mock' {
@@ -203,8 +203,8 @@ try
                 it 'should return UpdateNome=$true'{
                     $getResult.UpdateNow | should be $true
                 }
-                it 'should return Service=WU'{
-                    $getResult.Service | should be "WindowsUpdate"
+                it 'should return Source=WU'{
+                    $getResult.Source | should be "WindowsUpdate"
                 }
 
                 it 'should have called the mock' {
@@ -1587,6 +1587,82 @@ try
             }
         }
 
+        Describe "$($Global:DSCResourceName)\Test-TargetResourceProperties" {
+            Mock -CommandName Write-Warning -MockWith {} -Verifiable
+            Mock -CommandName Write-Verbose -MockWith {}
+
+            It 'Calls write-warning when no categories are passed' {
+                $PropertiesToTest = @{
+                    IsSingleInstance = 'Yes'
+                    Notifications = 'Disabled'
+                    Source = 'WindowsUpdate'
+                    Category = @()
+                    UpdateNow = $True
+                }
+                Test-TargetResourceProperties @PropertiesToTest
+
+                Assert-MockCalled -CommandName Write-Warning -Times 1 -Exactly -Scope It
+            }
+            
+            It 'Calls write-warning when Important updates are requested but not Security updates' {
+                $PropertiesToTest = @{
+                    IsSingleInstance = 'Yes'
+                    Notifications = 'Disabled'
+                    Source = 'WindowsUpdate'
+                    Category = 'Important'
+                }
+                Test-TargetResourceProperties @PropertiesToTest
+
+                Assert-MockCalled -CommandName Write-Warning -Times 1 -Exactly -Scope It
+            }
+
+            It 'Calls write-warning when Optional updates are requested but not Security updates' {
+                $PropertiesToTest = @{
+                    IsSingleInstance = 'Yes'
+                    Notifications = 'Disabled'
+                    Source = 'WindowsUpdate'
+                    Category = 'Optional'
+                    UpdateNow = $True
+                }
+                Test-TargetResourceProperties @PropertiesToTest
+
+                Assert-MockCalled -CommandName Write-Verbose -Times 1 -Exactly -Scope It
+            }
+
+            It 'Throws an exception when passed WSUS as a source' {
+                $PropertiesToTest = @{
+                    IsSingleInstance = 'Yes'
+                    Category = 'Security'
+                    Notifications = 'Disabled'
+                    Source = 'WSUS'
+                }
+                {Test-TargetResourceProperties @PropertiesToTest} | Should Throw
+            }
+        }
+
+        Describe "$($Global:DSCResourceName)\Get-WuaAuNotificationLevelInt" {
+            It 'Gets int for notification level of Not Configured' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Not Configured' | Should be 0
+            }
+            It 'Gets int for notification level of Disabled' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Disabled' | Should be 1
+            }
+            It 'Gets int for notification level of Notify before download' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Notify before download' | Should be 2
+            }
+            It 'Gets int for notification level of Notify before installation' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Notify before installation' | Should be 3
+            }
+            It 'Gets int for notification level of Scheduled Installation' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'Scheduled Installation' | Should be 4
+            }
+            It 'Gets int for notification level of ScheduledInstallation' {
+                Get-WuaAuNotificationLevelInt -notificationLevel 'ScheduledInstallation' | Should be 4
+            }
+            It 'Gets int for notification level when nothing is provided' {
+                { Get-WuaAuNotificationLevelInt } | Should Throw
+            }
+        }
     }
 
     #endregion
