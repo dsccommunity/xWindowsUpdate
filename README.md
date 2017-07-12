@@ -64,6 +64,8 @@ Please check out common DSC Resources
 
 ### Unreleased
 
+### 2.7.0.0
+
 * xWindowsUpdateAgent: Fix Get-TargetResource returning incorrect key
 
 ### 2.6.0.0
