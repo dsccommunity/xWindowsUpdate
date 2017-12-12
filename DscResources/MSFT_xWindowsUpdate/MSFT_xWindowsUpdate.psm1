@@ -39,6 +39,8 @@ Data LocalizedData
         RedirectingPackagePathToCacheFileLocation = Redirecting package path to cache file location.
         ThePathExtensionWasPathExt = The path extension was {0}
         CreatingTheDestinationCacheFile = Creating the destination cache file.
+        NotInMaintenanceWindow = Machine is not within the defined maintenance window. StartTime: {0} EndTime: {1}
+        InMaintenanceWindow = Machine is within the defined maintenance window. StartTime: {0} EndTime: {1}
 '@
 }
 
@@ -73,8 +75,7 @@ function Get-TargetResource
         Log = ''
     }
 
-    $returnValue    
-
+    $returnValue
 }
 
 $Debug = $true
@@ -96,7 +97,7 @@ Function New-InvalidArgumentException
     )
     Set-StrictMode -Version latest
     
-    $exception = new-object System.ArgumentException $Message,$ParamName
+    $exception = New-Object System.ArgumentException $Message,$ParamName
     $errorRecord = New-Object System.Management.Automation.ErrorRecord $exception,$ParamName,'InvalidArgument',$null
     throw $errorRecord
 }
@@ -124,9 +125,18 @@ function Set-TargetResource
         [System.String]
         $Ensure='Present',
 
-        [pscredential] $Credential
+        [pscredential] $Credential,
 
+        [Nullable[datetime]]
+        $StartTime,
+
+        [Nullable[datetime]]
+        $EndTime,
+
+        [boolean]
+        $SuppressReboot = $false
     )
+
     Set-StrictMode -Version latest
     if (!$Log)
     {
@@ -135,52 +145,62 @@ function Set-TargetResource
 
         Write-Verbose "$($LocalizedData.LogNotSpecified -f ${Log})"
     }
+    
     $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
-
     
-            
-    if($Ensure -eq 'Present')
+    if(Assert-MaintenanceWindow -StartTime $StartTime -EndTime $EndTime)
     {
-        $filePath = Test-WindowsUpdatePath -uri $uri -Credential $Credential 
-        Write-Verbose "$($LocalizedData.StartKeyWord) $($LocalizedData.ActionInstallUsingwsusa)"
-    
-        Start-Process -FilePath 'wusa.exe' -ArgumentList "`"$filepath`" /quiet /norestart /log:`"$Log`"" -Wait -NoNewWindow -ErrorAction SilentlyContinue
-        $errorOccured = Get-WinEvent -Path $Log -Oldest | Where-Object {$_.Id -eq 3}                         
-        if($errorOccured)
+        if($StartTime -or $EndTime)
         {
-            $errorMessage= $errorOccured.Message
-            Throw "$($LocalizedData.ErrorOccuredOnHotfixInstall -f ${Log}, ${errorMessage})"
+            Write-Verbose "$($LocalizedData.InMaintenanceWindow -f $StartTime, $EndTime)"
+        }
+        
+        switch ($Ensure)
+        {
+            'Present' {
+                $filePath = Test-WindowsUpdatePath -uri $uri -Credential $Credential 
+                Write-Verbose "$($LocalizedData.StartKeyWord) $($LocalizedData.ActionInstallUsingwsusa)"
+    
+                $process = Start-Process -FilePath 'wusa.exe' -ArgumentList "`"$filepath`" /quiet /norestart /log:`"$Log`"" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+                $errorOccured = Get-WinEvent -Path $Log -Oldest | Where-Object {$_.Id -eq 3}                         
+                if($errorOccured)
+                {
+                    $errorMessage= $errorOccured.Message
+                    Throw "$($LocalizedData.ErrorOccuredOnHotfixInstall -f ${Log}, ${errorMessage})"
+                }
+
+                Write-Verbose "$($LocalizedData.EndKeyWord) $($LocalizedData.ActionInstallUsingwsusa)"
+            }
+
+            'Absent' {
+                $argumentList = "/uninstall /KB:$kbId /quiet /norestart /log:`"$Log`""
+                Write-Verbose "$($LocalizedData.StartKeyWord) $($LocalizedData.ActionUninstallUsingwsusa) Arguments: $ArgumentList"
+    
+                $process = Start-Process -FilePath 'wusa.exe' -ArgumentList $argumentList -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue 
+                #Read the log and see if there was an error event
+                $errorOccured = Get-WinEvent -Path $Log -Oldest | Where-Object {$_.Id -eq 3}                         
+                if($errorOccured)
+                {
+                    $errorMessage= $errorOccured.Message
+                    Throw "$($LocalizedData.ErrorOccuredOnHotfixUninstall -f ${Log}, ${errorMessage})"
+                }
+
+                Write-Verbose "$($LocalizedData.EndKeyWord) $($LocalizedData.ActionUninstallUsingwsusa)"
+            }
         }
 
-        Write-Verbose "$($LocalizedData.EndKeyWord) $($LocalizedData.ActionInstallUsingwsusa)"
+        if($SuppressReboot -eq $false)
+        {
+            if($process.ExitCode -eq 3010)
+            {
+                # reboot machine if exitcode indicates reboot.
+                $global:DSCMachineStatus = 1        
+            }
+        }
     }
     else
     {
-        $argumentList = "/uninstall /KB:$kbId /quiet /norestart /log:`"$Log`""
-        
-        Write-Verbose "$($LocalizedData.StartKeyWord) $($LocalizedData.ActionUninstallUsingwsusa) Arguments: $ArgumentList"
-    
-        Start-Process -FilePath 'wusa.exe' -ArgumentList $argumentList  -Wait -NoNewWindow  -ErrorAction SilentlyContinue 
-        #Read the log and see if there was an error event
-        $errorOccured = Get-WinEvent -Path $Log -Oldest | Where-Object {$_.Id -eq 3}                         
-        if($errorOccured)
-        {
-            $errorMessage= $errorOccured.Message
-            Throw "$($LocalizedData.ErrorOccuredOnHotfixUninstall -f ${Log}, ${errorMessage})"
-        }
-
-        Write-Verbose "$($LocalizedData.EndKeyWord) $($LocalizedData.ActionUninstallUsingwsusa)"
-
-        
-    }
-    
-    if (Test-Path -Path 'variable:\LASTEXITCODE')
-    {
-        if ($LASTEXITCODE -eq 3010)
-        {
-            # reboot machine if exitcode indicates reboot.
-            $global:DSCMachineStatus = 1        
-        }
+        Write-Verbose "$($LocalizedData.NotInMaintenanceWindow -f $StartTime, $EndTime)"
     }
 }
 
@@ -207,8 +227,18 @@ function Test-TargetResource
         [System.String]
         $Ensure='Present',
 
-        [pscredential] $Credential
+        [pscredential] $Credential,
+        
+        [Nullable[datetime]]
+        $StartTime,
+
+        [Nullable[datetime]]
+        $EndTime,
+
+        [boolean]
+        $SuppressReboot
     )
+
     Set-StrictMode -Version latest
     Write-Verbose "$($LocalizedData.TestingEnsure -f ${Ensure})"
     $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
@@ -216,17 +246,16 @@ function Test-TargetResource
     # This is not the correct way to test to see if an update is applicable to a machine
     # but, WUSA does not currently expose a way to ask.
     $result = Get-HotFix -Id "KB$kbId" -ErrorAction SilentlyContinue
-    $returnValue=  [bool]$result
+    $returnValue = [bool]$result
+
     if($Ensure -eq 'Present')
     {
-
         Return $returnValue
     }
     else
     {
         Return !$returnValue
     }
-
 }
 
 Function Test-StandardArguments
@@ -297,6 +326,48 @@ Function Test-StandardArguments
     return @($uri, $kbId)
 }
 
+function Assert-MaintenanceWindow
+{
+    param
+    (
+        [Nullable[datetime]]$StartTime,
+
+        [Nullable[datetime]]$EndTime
+    )
+
+    $currentDate = Get-Date
+    Write-Verbose "Current date: $currentDate"
+
+    $inMaintenanceWindow = $false
+    #if no window defined, will always return $true to ignore the maintenance window logic
+    if(-not $StartTime -and -not $EndTime)
+    {
+        $inMaintenanceWindow = $true
+    }
+    elseif($StartTime -and $EndTime)
+    {
+        if($currentDate -gt $StartTime -and $currentDate -lt $EndTime)
+        {
+            $inMaintenanceWindow = $true   
+        }
+    }
+    elseif($StartTime)
+    {
+        if($currentDate -gt $StartTime)
+        {
+            $inMaintenanceWindow = $true
+        }
+    }
+    elseif($EndTime)
+    {
+        if($currentDate -lt $EndTime)
+        {
+            $inMaintenanceWindow = $true
+        }
+    }
+
+    return $inMaintenanceWindow
+}
 
 function Test-WindowsUpdatePath
 {
@@ -413,6 +484,3 @@ function Test-WindowsUpdatePath
 }
 
 Export-ModuleMember -Function *-TargetResource
-
-
-
