@@ -159,6 +159,27 @@ Configuration UpdateWindowsWithURI
     }
 }
 ```
+### xHotfix Maintenance Window
+
+This configuration will install the hotfix from the .msu file given
+only during the specified maintenance window.
+
+```powershell
+Configuration UpdateWindowsWithPath
+{
+    Node 'NodeName'
+    {
+        xHotfix HotfixInstall
+        {
+            Ensure = "Present"
+            Path = "c:/temp/Windows8.1-KB2908279-v2-x86.msu"
+            Id = "KB2908279"
+            StartTime = '12/25/2017 12:00AM'
+            EndTime = '12/25/2017 4:00AM'
+        }
+    }
+}
+```
 
 ### Enable Microsoft Update
 
