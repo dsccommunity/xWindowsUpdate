@@ -165,7 +165,7 @@ This configuration will install the hotfix from the .msu file given
 only during the specified maintenance window.
 
 ```powershell
-Configuration UpdateWindowsWithPath
+Configuration UpdateWindowsWithPathMaintenanceWindow
 {
     Node 'NodeName'
     {
@@ -266,7 +266,7 @@ Configuration UpdatesWithRebootSuppressed
             SuppressReboot = $true
         }
 
-        xWindowsUpdateReboot
+        xWindowsUpdateReboot RebootIfNeeded
         {
             IsSingleInstance = 'Yes'
         }
