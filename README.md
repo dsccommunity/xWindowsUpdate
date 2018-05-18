@@ -7,7 +7,7 @@ dev: [![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3
 [![codecov](https://codecov.io/gh/PowerShell/xWindowsUpdate/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/xWindowsUpdate)
 
 The **xWindowsUpdate** module contains the **xHotfix** and
-**xMicrosoftUpdate** DSC resources.  **xWindowsUpdate** installs a
+**xWindowsUpdateAgent** DSC resources.  **xHotfix** installs a
 Windows Update (or hotfix) from a given path. For more information on
 Windows Update and Hotfix, please refer to
 [this TechNet article](http://technet.microsoft.com/en-us/library/cc750077.aspx).
