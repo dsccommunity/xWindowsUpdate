@@ -64,6 +64,9 @@ Please check out common DSC Resources
 
 ### Unreleased
 
+* Tests no longer fail on `Assert-VerifiableMocks`, these are now renamed
+  to `Assert-VerifiableMock` (breaking change in Pester v4).
+
 ### 2.7.0.0
 
 * xWindowsUpdateAgent: Fix Get-TargetResource returning incorrect key
