@@ -10,7 +10,7 @@ The **xWindowsUpdate** module contains the **xHotfix** and
 **xWindowsUpdateAgent** DSC resources.  **xHotfix** installs a
 Windows Update (or hotfix) from a given path.
 **xWindowsUpdateAgent** will configure the source download settings for the machine,
-update notifications on the system, and can automatically initiate installation of the updates. 
+update notifications on the system, and can automatically initiate installation of the updates.
 For more information on Windows Update and Hotfix, please refer to
 [this TechNet article](http://technet.microsoft.com/en-us/library/cc750077.aspx).
 **xMicrosoftUpdate** enables or disables Microsoft Update.
