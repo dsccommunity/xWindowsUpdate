@@ -49,7 +49,7 @@ try
                 $getResult = (Get-TargetResource -Path 'C:\test.msu' -Id 'KB123457' )
 
                 it 'should have called get-hotfix'{
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
 
                 it 'should return id="KB123456"'{
@@ -72,7 +72,7 @@ try
                 $getResult = (Test-TargetResource -Path 'C:\test.msu' -Id 'KB123456' )
 
                 it 'should have called get-hotfix'{
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
 
                 it 'should return $true'{
@@ -86,7 +86,7 @@ try
                 $getResult = (Test-TargetResource -Path 'C:\test.msu' -Id 'KB123457' )
 
                 it 'should have called get-hotfix'{
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
 
                 it 'should return $true'{
