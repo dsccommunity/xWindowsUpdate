@@ -4,6 +4,9 @@
 version: 2.5.{build}.0
 install: 
     - git clone https://github.com/PowerShell/DscResource.Tests
+    - cd DscResource.Tests
+    - git checkout f1f2623aeec122c02635447b1d4e9413e2d7d923
+    - cd ..
     - ps: |
         $moduleName = 'xWindowsUpdate'
         $mainModuleFolder = ".\"
