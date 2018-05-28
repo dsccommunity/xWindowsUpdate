@@ -70,6 +70,7 @@ Please check out common DSC Resources
   to `Assert-VerifiableMock` (breaking change in Pester v4).
 * README.md has been updated with correct description of the resources
   ([issue #58](https://github.com/PowerShell/xWindowsUpdate/issues/58)).
+* Updated appveyor.yml to use the correct parameters to call the test framework.
 
 ### 2.7.0.0
 
