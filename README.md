@@ -71,6 +71,9 @@ Please check out common DSC Resources
 * README.md has been updated with correct description of the resources
   ([issue #58](https://github.com/PowerShell/xWindowsUpdate/issues/58)).
 * Updated appveyor.yml to use the correct parameters to call the test framework.
+* Update appveyor.yml to use the default template.
+* Added default template files .gitattributes, and .gitignore, and
+  .vscode folder.
 
 ### 2.7.0.0
 
