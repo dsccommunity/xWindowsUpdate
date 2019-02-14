@@ -444,7 +444,7 @@ function Set-TargetResource
     $notificationCompliant = (!$Notifications -or $Notifications -eq $Get.Notifications)
     Write-Verbose "notifications compliant: $notificationCompliant"
     $SourceCompliant = (!$Source -or $Source -eq $Get.Source)
-    Write-Verbose "service compliant: $notificationCompliant"
+    Write-Verbose "service compliant: $SourceCompliant"
 
             If(!$updateCompliant -and $PSCmdlet.ShouldProcess("Install Updates"))
             {
