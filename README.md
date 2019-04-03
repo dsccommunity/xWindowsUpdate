@@ -7,9 +7,11 @@ dev: [![Build status](https://ci.appveyor.com/api/projects/status/t4bw4lnmxy1dg3
 [![codecov](https://codecov.io/gh/PowerShell/xWindowsUpdate/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/xWindowsUpdate)
 
 The **xWindowsUpdate** module contains the **xHotfix** and
-**xMicrosoftUpdate** DSC resources.  **xWindowsUpdate** installs a
-Windows Update (or hotfix) from a given path. For more information on
-Windows Update and Hotfix, please refer to
+**xWindowsUpdateAgent** DSC resources.  **xHotfix** installs a
+Windows Update (or hotfix) from a given path.
+**xWindowsUpdateAgent** will configure the source download settings for the machine,
+update notifications on the system, and can automatically initiate installation of the updates.
+For more information on Windows Update and Hotfix, please refer to
 [this TechNet article](http://technet.microsoft.com/en-us/library/cc750077.aspx).
 **xMicrosoftUpdate** enables or disables Microsoft Update.
 
@@ -63,6 +65,18 @@ Please check out common DSC Resources
 ## Versions
 
 ### Unreleased
+
+### 2.8.0.0
+
+* xWindowsUpdateAgent: Fixed verbose statement returning incorrect variable
+* Tests no longer fail on `Assert-VerifiableMocks`, these are now renamed
+  to `Assert-VerifiableMock` (breaking change in Pester v4).
+* README.md has been updated with correct description of the resources
+  ([issue #58](https://github.com/PowerShell/xWindowsUpdate/issues/58)).
+* Updated appveyor.yml to use the correct parameters to call the test framework.
+* Update appveyor.yml to use the default template.
+* Added default template files .gitattributes, and .gitignore, and
+  .vscode folder.
 
 ### 2.7.0.0
 

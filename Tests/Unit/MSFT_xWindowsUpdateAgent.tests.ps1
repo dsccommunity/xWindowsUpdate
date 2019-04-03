@@ -42,7 +42,7 @@ try
     # The InModuleScope command allows you to perform white-box unit testing on the internal
     # (non-exported) code of a Script Module.
     InModuleScope $Global:DSCResourceName {
-        
+
         #region Pester Test Initialization
         $Global:mockedSearchResultWithUpdate = [PSCustomObject] @{
             Updates = @{
@@ -154,7 +154,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'null search result and disabled notification' {
@@ -208,7 +208,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'no updates property and disabled notification' {
@@ -260,7 +260,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'no updates and disabled notification' {
@@ -312,7 +312,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'no updates , disabled notification, and reboot required' {
@@ -364,7 +364,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'updates and disable notification' {
@@ -416,7 +416,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'updates and other notification' {
@@ -468,7 +468,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
         }
@@ -502,7 +502,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -531,7 +531,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -558,7 +558,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure UpToDate with no updates, disabled notification and reboot requirde' {
@@ -584,7 +584,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure UpToDate with updates and disabled notification' {
@@ -610,7 +610,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure Disable with updates and disable notification' {
@@ -646,7 +646,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure Disable with updates and other notification' {
@@ -682,7 +682,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -709,7 +709,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure UpdateNow = $false with updates and other notification' {
@@ -745,7 +745,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
         }
@@ -805,7 +805,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure UpToDate with no updates, mu and disabled notification' {
@@ -853,7 +853,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -904,7 +904,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -956,7 +956,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -1004,7 +1004,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure UpToDate with no updates, disabled notification and reboot required' {
@@ -1051,7 +1051,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure UpToDate with updates and disabled notification' {
@@ -1097,7 +1097,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure UpToDate with updates and disabled notification with reboot after install' {
@@ -1158,7 +1158,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
             Context 'Ensure Disable with updates and disable notification' {
@@ -1216,7 +1216,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -1276,7 +1276,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -1321,7 +1321,7 @@ try
                 }
 
                 it 'should have called the mock' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                 }
             }
 
@@ -1483,7 +1483,7 @@ try
             }
 
             it "should have called the mock" {
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
             }
 
             it "should have created testdrive:\addservice2.txt" {
@@ -1603,7 +1603,7 @@ try
 
                 Assert-MockCalled -CommandName Write-Warning -Times 1 -Exactly -Scope It
             }
-            
+
             It 'Calls write-warning when Important updates are requested but not Security updates' {
                 $PropertiesToTest = @{
                     IsSingleInstance = 'Yes'

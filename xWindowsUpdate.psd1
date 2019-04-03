@@ -1,6 +1,6 @@
 @{
 # Version number of this module.
-ModuleVersion = '2.7.0.0'
+moduleVersion = '2.8.0.0'
 
 # ID used to uniquely identify this module
 GUID = 'a9cba250-ea73-4d82-b31b-7e58cc50ffd1'
@@ -47,7 +47,15 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* xWindowsUpdateAgent: Fix Get-TargetResource returning incorrect key
+        ReleaseNotes = '* xWindowsUpdateAgent: Fixed verbose statement returning incorrect variable
+* Tests no longer fail on `Assert-VerifiableMocks`, these are now renamed
+  to `Assert-VerifiableMock` (breaking change in Pester v4).
+* README.md has been updated with correct description of the resources
+  ([issue 58](https://github.com/PowerShell/xWindowsUpdate/issues/58)).
+* Updated appveyor.yml to use the correct parameters to call the test framework.
+* Update appveyor.yml to use the default template.
+* Added default template files .gitattributes, and .gitignore, and
+  .vscode folder.
 
 '
 
@@ -55,6 +63,7 @@ PrivateData = @{
 
 } # End of PrivateData hashtable
 }
+
 
 
 
