@@ -66,6 +66,8 @@ Please check out common DSC Resources
 
 ### Unreleased
 
+### 2.8.0.0
+
 * xWindowsUpdateAgent: Fixed verbose statement returning incorrect variable
 * Tests no longer fail on `Assert-VerifiableMocks`, these are now renamed
   to `Assert-VerifiableMock` (breaking change in Pester v4).
