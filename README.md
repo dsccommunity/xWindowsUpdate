@@ -66,6 +66,8 @@ Please check out common DSC Resources
 
 ### Unreleased
 
+* Added Retry logic to known transisent errors ([issue #24](https://github.com/dsccommunity/xWindowsUpdate/issues/24)).
+
 ### 2.8.0.0
 
 * xWindowsUpdateAgent: Fixed verbose statement returning incorrect variable

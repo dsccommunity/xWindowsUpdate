@@ -1,5 +1,7 @@
 Set-StrictMode -Version latest
 $script:WuaSearchString = 'IsAssigned=1 and IsHidden=0 and IsInstalled=0'
+$script:retryAttempts = 3
+$script:retryDelay = 0
 function Get-WuaServiceManager
 {
     return (New-Object -ComObject Microsoft.Update.ServiceManager)
@@ -125,39 +127,80 @@ function Get-WuaWrapper {
         [object] $ExceptionReturnValue = $null
     )
 
-    try {
-        return Invoke-Command -ScriptBlock $tryBlock -NoNewScope -ArgumentList $argumentList
-    }
-    catch [System.Runtime.InteropServices.COMException]
-    {
-        switch($_.Exception.HResult)
+    $lastHResult = 0
+    $errorCount = 0
+    $running = $true
+
+    while ($running) {
+        try {
+            return Invoke-Command -ScriptBlock $tryBlock -NoNewScope -ArgumentList $argumentList
+            $running = $false
+        }
+        catch [System.Runtime.InteropServices.COMException]
         {
-            # 0x8024001e    -2145124322    WU_E_SERVICE_STOP    Operation did not complete because the service or system was being shut down.    wuerror.h
-            -2145124322 {
-                Write-Warning 'Got an error that WU service is stopping.  Handling the error.'
-                return $ExceptionReturnValue
+            if($_.Exception.HResult -ne $lastHResult){
+                $lastHResult = $_.Exception.HResult
+                $errorCount = 0
             }
-            # 0x8024402c    -2145107924    WU_E_PT_WINHTTP_NAME_NOT_RESOLVED    Same as ERROR_WINHTTP_NAME_NOT_RESOLVED - the proxy server or target server name cannot be resolved.    wuerror.h
-            -2145107924 {
-                # TODO: add retry for this error
-                Write-Warning 'Got an error that WU could not resolve the name of the update service.  Handling the error.'
-                return $ExceptionReturnValue
+            switch($_.Exception.HResult)
+            {
+                # 0x8024001e    -2145124322    WU_E_SERVICE_STOP    Operation did not complete because the service or system was being shut down.    wuerror.h
+                -2145124322 {
+                    Write-Warning 'Got an error that WU service is stopping.  Handling the error.'
+                    return $ExceptionReturnValue
+                }
+                # 0x8024402c    -2145107924    WU_E_PT_WINHTTP_NAME_NOT_RESOLVED    Same as ERROR_WINHTTP_NAME_NOT_RESOLVED - the proxy server or target server name cannot be resolved.    wuerror.h
+                -2145107924 {
+                    if($errorCount++ -lt $script:retryAttempts) {
+                        Write-Warning 'Got an error that WU could not resolve the name of the update service.  Retrying...'
+                    }
+                    else{
+                        $running = $false
+                        throw
+                    }
+                }
+                # 0x8024401c    -2145107940    WU_E_PT_HTTP_STATUS_REQUEST_TIMEOUT    Same as HTTP status 408 - the server timed out waiting for the request.    wuerror.h
+                -2145107940 {
+                    if($errorCount++ -lt $script:retryAttempts) {
+                        Write-Warning 'Got an error a request timed out (http status 408 or equivalent) when WU was communicating with the update service.  Retrying...'
+                    }
+                    else{
+                        $running = $false
+                        throw
+                    }
+                }
+                # 0x8024402f    -2145107921    WU_E_PT_ECP_SUCCEEDED_WITH_ERRORS    External cab file processing completed with some errors.    wuerror.h
+                -2145107921 {
+                    # No retry needed
+                    Write-Warning 'Got an error that CAB processing completed with some errors.'
+                    return $ExceptionReturnValue
+                }
+                # 0x80244022    -2145107934    WU_E_PT_HTTP_STATUS_SERVICE_UNAVAIL  Same as HTTP status 503 - the service is temporarily overloaded.    wuerror.h
+                -2145107934 {
+                    if($errorCount++ -lt $script:retryAttempts) {
+                        Write-Warning "Error communicating with the update service, HTTP 503, The service is temporarily overloaded. Retrying..."
+                    }
+                    else{
+                        $running = $false
+                        throw
+                    }
+                }
+                # 0x80244010    ‭-2145107952‬    The maximum allowed number of round trips to the server was exceeded
+                -2145107952 {
+                    if($errorCount++ -lt $script:retryAttempts) {
+                        Write-Warning "The maximum allowed number of round trips to the server was exceeded. Retrying..."
+                    }
+                    else{
+                        $running = $false
+                        throw
+                    }
+                }
+                default {
+                    throw
+                }
             }
-            # 0x8024401c    -2145107940    WU_E_PT_HTTP_STATUS_REQUEST_TIMEOUT    Same as HTTP status 408 - the server timed out waiting for the request.    wuerror.h
-            -2145107940 {
-                # TODO: add retry for this error
-                Write-Warning 'Got an error a request timed out (http status 408 or equivalent) when WU was communicating with the update service.  Handling the error.'
-                return $ExceptionReturnValue
-            }
-            # 0x8024402f    -2145107921    WU_E_PT_ECP_SUCCEEDED_WITH_ERRORS    External cab file processing completed with some errors.    wuerror.h
-            -2145107921 {
-                # No retry needed
-                Write-Warning 'Got an error that CAB processing completed with some errors.'
-                return $ExceptionReturnValue
-            }
-            default {
-                throw
-            }
+
+            Start-Sleep -Seconds $script:retryDelay
         }
     }
 }
@@ -350,9 +393,22 @@ function Get-TargetResource
         [System.String]
         $Source,
 
+        [int]
+        $RetryAttempts = -1,
+
+        [int]
+        $RetryDelay = -1,
+
         [bool]
         $UpdateNow = $false
     )
+
+    if($RetryAttempts -ge 0){
+        $script:retryAttempts = $RetryAttempts
+    }
+    if($RetryDelay -ge 0){
+        $script:retryDelay = $RetryAttempts
+    }
 
     Test-TargetResourceProperties @PSBoundParameters
     $totalUpdatesNotInstalled = $null
@@ -431,9 +487,22 @@ function Set-TargetResource
         [System.String]
         $Source,
 
+        [int]
+        $RetryAttempts = -1,
+
+        [int]
+        $RetryDelay = -1,
+
         [bool]
         $UpdateNow = $false
     )
+
+    if($RetryAttempts -ge 0){
+        $script:retryAttempts = $RetryAttempts
+    }
+    if($RetryDelay -ge 0){
+        $script:retryDelay = $RetryAttempts
+    }
 
     Test-TargetResourceProperties @PSBoundParameters
 
@@ -537,9 +606,22 @@ function Test-TargetResource
         [System.String]
         $Source,
 
+        [int]
+        $RetryAttempts = -1,
+
+        [int]
+        $RetryDelay = -1,
+
         [bool]
         $UpdateNow = $false
     )
+
+    if($RetryAttempts -ge 0){
+        $script:retryAttempts = $RetryAttempts
+    }
+    if($RetryDelay -ge 0){
+        $script:retryDelay = $RetryAttempts
+    }
 
     Test-TargetResourceProperties @PSBoundParameters
     #Output the result of Get-TargetResource function.
