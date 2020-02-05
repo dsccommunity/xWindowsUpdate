@@ -54,6 +54,9 @@ Please check out common DSC Resources
     Note that 'WSUS' is currently reserved for future use.
 * **IsSingleInstance**: Should always be yes.  Ensures you can only have
     one instance of this resource in a configuration.
+* **RetryAttempts**: Specifies the number of retries when some known transient errors are raised during calls to Windows Update.
+    Defaults to 3 attempts. Known transient errors 0x8024402c, 0x8024401c, 0x80244022, 0x80244010.
+* **Retry Delay**: Specifies the delay in seconds before each retry. Defaults to 0.
 
 ### xMicrosoftUpdate
 
