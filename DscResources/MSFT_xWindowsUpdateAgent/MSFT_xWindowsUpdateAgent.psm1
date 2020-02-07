@@ -2,6 +2,8 @@ Set-StrictMode -Version latest
 $script:WuaSearchString = 'IsAssigned=1 and IsHidden=0 and IsInstalled=0'
 $script:retryAttempts = 3
 $script:retryDelay = 0
+$script:lastHResult = 0
+$script:errorCount = 0
 function Get-WuaServiceManager
 {
     return (New-Object -ComObject Microsoft.Update.ServiceManager)
@@ -123,6 +125,40 @@ function Get-WuaAuSettings
     return (Get-WuaAu).Settings
 }
 
+function Check-Retry
+{
+    param
+    (
+        [Parameter()]
+        $ErrorObject
+    )
+
+    if($ErrorObject.Retryable)
+    {
+        if ($ErrorObject.Exception.HResult -ne $script:lastHResult)
+        {
+            $script:lastHResult = $ErrorObject.Exception.HResult
+            $script:errorCount = 0
+        }
+
+        if ($script:errorCount++ -lt $script:retryAttempts)
+        {
+            Write-Warning "$($ErrorObject.WarningText) Retrying..."
+            return $true
+        }
+        else
+        {
+            throw $ErrorObject.Exception
+        }
+
+        Start-Sleep -Seconds $script:retryDelay
+    }
+    else
+    {
+        return $false
+    }
+}
+
 function Get-WuaWrapper
 {
     param
@@ -140,90 +176,60 @@ function Get-WuaWrapper
         $ExceptionReturnValue = $null
     )
 
-    $lastHResult = 0
-    $errorCount = 0
-    $running = $true
+    $script:lastHResult = 0
+    $script:errorCount = 0
 
-    while ($running)
+    while ($true)
     {
         try
         {
             return Invoke-Command -ScriptBlock $tryBlock -NoNewScope -ArgumentList $argumentList
-            $running = $false
         }
         catch [System.Runtime.InteropServices.COMException]
         {
-            if ($_.Exception.HResult -ne $lastHResult)
-            {
-                $lastHResult = $_.Exception.HResult
-                $errorCount = 0
+            $errorObj = [PSCustomObject]@{
+                Exception = $_.Exception
+                WarningText = ''
+                Retryable = $false
             }
             switch ($_.Exception.HResult)
             {
                 # 0x8024001e    -2145124322    WU_E_SERVICE_STOP    Operation did not complete because the service or system was being shut down.    wuerror.h
                 -2145124322
                 {
-                    Write-Warning 'Got an error that WU service is stopping.  Handling the error.'
+                    $errorObj.WarningText = 'Got an error that WU service is stopping.  Handling the error.'
                     return $ExceptionReturnValue
                 }
                 # 0x8024402c    -2145107924    WU_E_PT_WINHTTP_NAME_NOT_RESOLVED    Same as ERROR_WINHTTP_NAME_NOT_RESOLVED - the proxy server or target server name cannot be resolved.    wuerror.h
                 -2145107924
                 {
-                    if ($errorCount++ -lt $script:retryAttempts)
-                    {
-                        Write-Warning 'Got an error that WU could not resolve the name of the update service.  Retrying...'
-                    }
-                    else
-                    {
-                        $running = $false
-                        throw
-                    }
+                    $errorObj.WarningText = 'Got an error that WU could not resolve the name of the update service.'
+                    $errorObj.Retryable = $true
                 }
                 # 0x8024401c    -2145107940    WU_E_PT_HTTP_STATUS_REQUEST_TIMEOUT    Same as HTTP status 408 - the server timed out waiting for the request.    wuerror.h
                 -2145107940
                 {
-                    if ($errorCount++ -lt $script:retryAttempts)
-                    {
-                        Write-Warning 'Got an error a request timed out (http status 408 or equivalent) when WU was communicating with the update service.  Retrying...'
-                    }
-                    else
-                    {
-                        $running = $false
-                        throw
-                    }
+                    $errorObj.WarningText = 'Got an error a request timed out (http status 408 or equivalent) when WU was communicating with the update service.'
+                    $errorObj.Retryable = $true
                 }
                 # 0x8024402f    -2145107921    WU_E_PT_ECP_SUCCEEDED_WITH_ERRORS    External cab file processing completed with some errors.    wuerror.h
                 -2145107921
                 {
                     # No retry needed
-                    Write-Warning 'Got an error that CAB processing completed with some errors.'
+                    $errorObj.WarningText = 'Got an error that CAB processing completed with some errors.'
                     return $ExceptionReturnValue
                 }
                 # 0x80244022    -2145107934    WU_E_PT_HTTP_STATUS_SERVICE_UNAVAIL  Same as HTTP status 503 - the service is temporarily overloaded.    wuerror.h
                 -2145107934
                 {
-                    if ($errorCount++ -lt $script:retryAttempts)
-                    {
-                        Write-Warning "Error communicating with the update service, HTTP 503, The service is temporarily overloaded. Retrying..."
-                    }
-                    else
-                    {
-                        $running = $false
-                        throw
-                    }
+                    $errorObj.WarningText = "Error communicating with the update service, HTTP 503, The service is temporarily overloaded."
+                    $errorObj.Retryable = $true
                 }
                 # 0x80244010    ‭-2145107952‬    The maximum allowed number of round trips to the server was exceeded
                 -2145107952
                 {
-                    if ($errorCount++ -lt $script:retryAttempts)
-                    {
-                        Write-Warning "The maximum allowed number of round trips to the server was exceeded. Retrying..."
-                    }
-                    else
-                    {
-                        $running = $false
-                        throw
-                    }
+                    $errorObj.WarningText = "The maximum allowed number of round trips to the server was exceeded."
+                    $errorObj.Retryable = $true
                 }
                 default
                 {
@@ -231,7 +237,10 @@ function Get-WuaWrapper
                 }
             }
 
-            Start-Sleep -Seconds $script:retryDelay
+            if(-not (Check-Retry $errorObj))
+            {
+                return $ExceptionReturnValue
+            }
         }
     }
 }
