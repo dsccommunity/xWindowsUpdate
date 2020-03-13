@@ -716,15 +716,6 @@ function Test-TargetResource
         $UpdateNow = $false
     )
 
-    if ($RetryAttempts -ge 0)
-    {
-        $script:retryAttempts = $RetryAttempts
-    }
-    if ($RetryDelay -ge 0)
-    {
-        $script:retryDelay = $RetryAttempts
-    }
-
     Test-TargetResourceProperties @PSBoundParameters
     #Output the result of Get-TargetResource function.
     $Get = Get-TargetResource @PSBoundParameters
