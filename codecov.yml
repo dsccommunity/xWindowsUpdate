@@ -24,7 +24,3 @@ coverage:
         # and let codecov.io set the goal for the code changed in the patch.
         target: auto
         threshold: 5
-
-# MSFT_xMicrosoftUpdate is deprecated
-ignore:
-  - "DscResources/MSFT_xMicrosoftUpdate/MSFT_xMicrosoftUpdate.psm1"
