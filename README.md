@@ -13,7 +13,6 @@ Windows Update (or hotfix) from a given path.
 update notifications on the system, and can automatically initiate installation of the updates.
 For more information on Windows Update and Hotfix, please refer to
 [this TechNet article](http://technet.microsoft.com/en-us/library/cc750077.aspx).
-**xMicrosoftUpdate** enables or disables Microsoft Update.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/)
@@ -109,11 +108,12 @@ None.
 ### 2.6.0.0
 
 - Converted appveyor.yml to install Pester from PSGallery instead of from
-    Chocolatey.
+  Chocolatey.
 - Fixed PSScriptAnalyzer issues.
 - Fixed common test breaks (markdown style, and example style).
 - Added CodeCov.io reporting
-- Deprecated xMicrosoftUpdate as it's functionality is replaced by xWindowsUpdateAgent
+- Deprecated xMicrosoftUpdate as it's functionality is replaced by
+  xWindowsUpdateAgent
 
 ### 2.5.0.0
 
@@ -126,11 +126,11 @@ None.
 ### 2.3.0.0
 
 - MSFT_xWindowsUpdate: Fixed an issue in the Get-TargetResource function,
-    resulting in the Get-DscConfiguration cmdlet now working appropriately
-    when the resource is applied.
+  resulting in the Get-DscConfiguration cmdlet now working appropriately
+  when the resource is applied.
 - MSFT_xWindowsUpdate: Fixed an issue in the Set-TargetResource function
-    that was causing the function to fail when the installation of a hotfix
-    did not provide an exit code.
+  that was causing the function to fail when the installation of a hotfix
+  did not provide an exit code.
 
 ### 2.2.0.0
 
@@ -139,7 +139,7 @@ None.
 ### 2.1.0.0
 
 - Added xMicrosoftUpdate DSC resource which can be used to enable/disable
-    Microsoft Update in the Windows Update Settings.
+  Microsoft Update in the Windows Update Settings.
 
 ### 1.0.0.0
 
