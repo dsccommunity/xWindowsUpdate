@@ -5,9 +5,10 @@ class MSFT_xWindowsUpdate : OMI_BaseResource
     // Therefore the file path should be the key
     [key, Description("Specifies the path that contains the msu file for the hotfix installation.")] String Path;
     [required, Description("Specifies the Hotfix ID.")] String Id;
-    [Write, Description("Specifies the location of the log that contains information from the installation.")] String Log;
-    [Write, Description("Specifies whether the hotfix needs to be installed or uninstalled."), ValueMap{"Present","Absent"}, Values{"Present","Absent"}] String Ensure;
+    [write, Description("Specifies the location of the log that contains information from the installation.")] String Log;
+    [write, Description("Specifies whether the hotfix needs to be installed or uninstalled."), ValueMap{"Present","Absent"}, Values{"Present","Absent"}] String Ensure;
     [write, Description("Specifies the credential to use to authenticate to a UNC share if the path is on a UNC share."),EmbeddedInstance("MSFT_Credential")] string Credential;
+    [write, Description("Specifies the start time for the maintenance window.")] datetime StartTime;
+    [write, Description("Specifies the end time for the maintenance window.")] datetime EndTime;
+    [write, Description("Specifies whether or not a reboot will be suppressed.")] boolean SuppressReboot;
 };
-
-

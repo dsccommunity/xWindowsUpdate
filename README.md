@@ -36,6 +36,10 @@ Please check out common DSC Resources
 * **Id**: The hotfix ID of the Windows update that uniquely identifies
     the hotfix.
 * **Ensure**: Ensures that the hotfix is **Present** or **Absent**.
+* **SuppressReboot**: Ignores the pending reboot flag if specified
+* **StartTime**: The earliest time to install the patch
+* **EndTime**: The latest time to install the patch
+
 
 ### xWindowsUpdateAgent
 
@@ -57,6 +61,12 @@ Please check out common DSC Resources
 * **RetryAttempts**: Specifies the number of retries when some known transient errors are raised during calls to Windows Update.
     Defaults to 3 attempts. Known transient errors 0x8024402c, 0x8024401c, 0x80244022, 0x80244010.
 * **Retry Delay**: Specifies the delay in seconds before each retry. Defaults to 0.
+
+### xWindowsUpdateReboot
+
+* **IsSingleInstance**: This will be the only instance of this resource on a single machine
+* **StartTime**: The earliest time to install the patch
+* **EndTime**: The latest time to install the patch
 
 ### xMicrosoftUpdate
 
@@ -168,6 +178,27 @@ Configuration UpdateWindowsWithURI
     }
 }
 ```
+### xHotfix Maintenance Window
+
+This configuration will install the hotfix from the .msu file given
+only during the specified maintenance window.
+
+```powershell
+Configuration UpdateWindowsWithPathMaintenanceWindow
+{
+    Node 'NodeName'
+    {
+        xHotfix HotfixInstall
+        {
+            Ensure = "Present"
+            Path = "c:/temp/Windows8.1-KB2908279-v2-x86.msu"
+            Id = "KB2908279"
+            StartTime = '12/25/2017 12:00AM'
+            EndTime = '12/25/2017 4:00AM'
+        }
+    }
+}
+```
 
 ### Enable Microsoft Update
 
@@ -223,6 +254,41 @@ Configuration WuScheduleInstall
         UpdateNow        = $false
         Source           = 'WindowsUpdate'
         Notifications    = 'ScheduledInstallation'
+    }
+}
+```
+
+### xWindowsUpdateReboot Sample 1
+
+Installs both xHotfix updates but waits until the xWindowsUpdateReboot to
+enforce the reboot.
+
+```PowerShell
+Configuration UpdatesWithRebootSuppressed
+{
+    Import-DscResource -ModuleName xWindowsUpdate
+    Node 'NodeName'
+    {
+        xHotfix HotfixInstall
+        {
+            Ensure = "Present"
+            Path = "http://hotfixv4.microsoft.com/Microsoft%20Office%20SharePoint%20Server%202007/sp2/officekb956056fullfilex64glb/12.0000.6327.5000/free/358323_intl_x64_zip.exe"
+            Id = "KB2937982"
+            SuppressReboot = $true
+        }
+        
+        xHotfix HotfixInstall
+        {
+            Ensure = "Present"
+            Path = "c:/temp/Windows8.1-KB2908279-v2-x86.msu"
+            Id = "KB2908279"
+            SuppressReboot = $true
+        }
+
+        xWindowsUpdateReboot RebootIfNeeded
+        {
+            IsSingleInstance = 'Yes'
+        }
     }
 }
 ```
