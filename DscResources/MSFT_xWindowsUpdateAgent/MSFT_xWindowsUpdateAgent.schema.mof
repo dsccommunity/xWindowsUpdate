@@ -3,14 +3,16 @@
 class MSFT_xWindowsUpdateAgent : OMI_BaseResource
 {
     [Key, Description("Specifies the resource is a single instance, the value must be 'Yes'"), ValueMap{"Yes"}, Values{"Yes"}] String IsSingleInstance;
-    [write, Description("Indicates if the resource should ensure all Windows Updates are installed or if Automatic updates should be disabled."), ValueMap{"Security","Important","Optional"}, 
+    [write, Description("Indicates if the resource should ensure all Windows Updates are installed or if Automatic updates should be disabled."), ValueMap{"Security","Important","Optional"},
         Values{"Security","Important","Optional"}] String Category[];
-    [Write, Description("Indicates if Windows update agent should notify about updates, see:https://msdn.microsoft.com/en-us/library/windows/desktop/aa385806%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396."), 
-        ValueMap{"Disabled","ScheduledInstallation"}, 
+    [Write, Description("Indicates if Windows update agent should notify about updates, see:https://msdn.microsoft.com/en-us/library/windows/desktop/aa385806%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396."),
+        ValueMap{"Disabled","ScheduledInstallation"},
         Values{"Disabled","ScheduledInstallation"}] String Notifications;
-    [Required, Description("Indicates which source service Windows update agent should use.  Note: WSUS is not implemented in this resource."), ValueMap{"WindowsUpdate","MicrosoftUpdate","WSUS"}, 
+    [Required, Description("Indicates which source service Windows update agent should use.  Note: WSUS is not implemented in this resource."), ValueMap{"WindowsUpdate","MicrosoftUpdate","WSUS"},
         Values{"WindowsUpdate","MicrosoftUpdate","WSUS"}] String Source;
     [Write, Description("Indicates if the resource should trigger an update during consistency.")] boolean UpdateNow;
+    [Write, Description("Specifies the number of retries when some known transient errors are raised during calls to Windows Update. Defaults to 3 attempts. Known transient errors 0x8024402c, 0x8024401c, 0x80244022, 0x80244010.")] sint32 RetryAttempts;
+    [Write, Description("Specifies the delay in seconds before each retry. Defaults to 0.")] sint32 RetryDelay;
     [Read, Description("Automatic Updates Notification Setting")] String AutomaticUpdatesNotificationSetting;
     [Read, Description("Count of updates not installed.  Only returned if UpdateNow is specified.")] uint32  TotalUpdatesNotInstalled;
     [Read, Description("Indicates if Wua Requires a reboot.  Only returned if UpdateNow is specified.")] boolean RebootRequired;

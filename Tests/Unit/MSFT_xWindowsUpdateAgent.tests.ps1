@@ -1344,24 +1344,16 @@ try
                     throw $exceptionMessage
                 } -argumentList @(1,2)} | should throw $exceptionMessage
             }
-            $exceptions = @(@{
+            $handleErrors = @(@{
                 hresult = -2145124322
                 Name = 'rebooting'
-            },
-            @{
-                hresult = -2145107924
-                Name = 'HostNotFound'
-            },
-            @{
-                hresult = -2145107940
-                Name = 'RequestTimeout'
             },
             @{
                 hresult = -2145107921
                 Name = 'CabProcessingSuceededWithError'
             }
             )
-            foreach($exception in $exceptions)
+            foreach($exception in $handleErrors)
             {
                 $name = $exception.Name
                 $hresult = $exception.hresult
@@ -1381,6 +1373,43 @@ try
                         $exception = new-object -TypeName 'System.Runtime.InteropServices.COMException' -ArgumentList @('mocked com exception',$hresult)
                         throw $exception
                     } @wrapperParams  | should be $exceptionReturnValue
+                }
+            }
+            $retryErrors = @(@{
+                hresult = -2145107924
+                Name = 'HostNotFound'
+            },
+            @{
+                hresult = -2145107940
+                Name = 'RequestTimeout'
+            },
+            @{
+                hresult = -2145107934
+                Name = 'ServiceIsOverloaded'
+            },
+            @{
+                hresult = -2145107952
+                Name = 'MaxRoundTripsExceeded'
+            }
+            )
+            foreach($exception in $retryErrors)
+            {
+                $name = $exception.Name
+                $hresult = $exception.hresult
+                it "should throw $name exception because does not resolve before retry count is exceeded" {
+                    {Get-WuaWrapper -tryBlock {
+                        $exception = new-object -TypeName 'System.Runtime.InteropServices.COMException' -ArgumentList @('mocked com exception',$hresult)
+                        throw $exception
+                    }} | should throw
+                }
+                it "should not throw $name exception because transisent error resolves before retry count is exceeded" {
+                    $count = 0
+                    {Get-WuaWrapper -tryBlock {
+                        $exception = new-object -TypeName 'System.Runtime.InteropServices.COMException' -ArgumentList @('mocked com exception',$hresult)
+                        if($count++ -le 1) {
+                            throw $exception
+                        }
+                    }} | should not throw
                 }
             }
         }
