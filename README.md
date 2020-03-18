@@ -52,7 +52,7 @@ None.
 
 - **`[String]` IsSingleInstance**: Specifies the resource is a single
   instance, the value must be 'Yes'.
-- **`[Boolean]` UpdateNow**: Specifies if the resource should trigger an
+- **`[System.Boolean]` UpdateNow**: Specifies if the resource should trigger an
   update during consistency check including initial configuration.
 - **`[String[]]` Category**: Specifies one or more categories of updates
   that should be included. Defaults to `'Security'`. Please note that
@@ -78,5 +78,5 @@ None.
   Notification Setting.
 - **`[UInt32]` TotalUpdatesNotInstalled**: Count of updates not installed.
   Only returned if UpdateNow is specified.
-- **`[Boolean]` RebootRequired**: Indicates if Wua Requires a reboot. Only
+- **`[System.Boolean]` RebootRequired**: Indicates if Wua Requires a reboot. Only
   returned if UpdateNow is specified.

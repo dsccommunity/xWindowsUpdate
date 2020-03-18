@@ -4,7 +4,6 @@ $script:retryAttempts = 3
 $script:retryDelay = 0
 $script:lastHResult = 0
 $script:errorCount = 0
-
 function Get-WuaServiceManager
 {
     return (New-Object -ComObject Microsoft.Update.ServiceManager)
@@ -18,11 +17,9 @@ function Add-WuaService
         [System.String]
         $ServiceId,
 
-        [Parameter()]
         [System.Int32]
         $Flags = 7,
 
-        [Parameter()]
         [System.String]
         $AuthorizationCabPath = [System.String]::Empty
 
@@ -49,24 +46,17 @@ function Get-WuaSearchString
 {
     param
     (
-        [Parameter()]
         [switch]
         $security,
-
-        [Parameter()]
         [switch]
         $optional,
-
-        [Parameter()]
         [switch]
         $important
     )
-
     $securityCategoryId = "'0FA1201D-4330-4FA8-8AE9-B877473B6441'"
     <#
-        invalid, would not install anything - not security and not optional and not important
+    # invalid, would not install anything - not security and not optional and not important
     #>
-
     # security and optional and important
     # not security and optional and important
     if ($optional -and $important)
@@ -143,7 +133,7 @@ function Check-Retry
         $ErrorObject
     )
 
-    if ($ErrorObject.Retryable)
+    if($ErrorObject.Retryable)
     {
         if ($ErrorObject.Exception.HResult -ne $script:lastHResult)
         {
@@ -198,11 +188,10 @@ function Get-WuaWrapper
         catch [System.Runtime.InteropServices.COMException]
         {
             $errorObj = [PSCustomObject]@{
-                Exception   = $_.Exception
+                Exception = $_.Exception
                 WarningText = ''
-                Retryable   = $false
+                Retryable = $false
             }
-
             switch ($_.Exception.HResult)
             {
                 # 0x8024001e    -2145124322    WU_E_SERVICE_STOP    Operation did not complete because the service or system was being shut down.    wuerror.h
@@ -248,7 +237,7 @@ function Get-WuaWrapper
                 }
             }
 
-            if (-not (Check-Retry $errorObj))
+            if(-not (Check-Retry $errorObj))
             {
                 return $ExceptionReturnValue
             }
@@ -295,8 +284,7 @@ function Invoke-WuaDownloadUpdates
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [object]
-        $UpdateCollection
+        [object] $UpdateCollection
     )
 
     $downloader = (Get-WuaSession).CreateUpdateDownloader()
@@ -312,8 +300,7 @@ function Invoke-WuaInstallUpdates
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [object]
-        $UpdateCollection
+        [object] $UpdateCollection
     )
 
     $installer = (Get-WuaSession).CreateUpdateInstaller()
@@ -327,12 +314,10 @@ function Set-WuaAuNotificationLevel
 {
     param
     (
-        [Parameter()]
         [ValidateSet('Not Configured', 'Disabled', 'Notify before download', 'Notify before installation', 'Scheduled installation', 'ScheduledInstallation')]
         [System.String]
         $notificationLevel
     )
-
     $intNotificationLevel = Get-WuaAuNotificationLevelInt -notificationLevel $notificationLevel
 
     $settings = Get-WuaAuSettings
@@ -344,44 +329,31 @@ function Get-WuaAuNotificationLevelInt
 {
     param
     (
-        [Parameter()]
         [ValidateSet('Not Configured', 'Disabled', 'Notify before download', 'Notify before installation', 'Scheduled installation', 'ScheduledInstallation')]
         [System.String]
         $notificationLevel
     )
-
     $intNotificationLevel = 0
 
     switch -Regex ($notificationLevel)
     {
         '^Not\s*Configured$'
-        {
-            $intNotificationLevel = 0
+        { $intNotificationLevel = 0
         }
-
         '^Disabled$'
-        {
-            $intNotificationLevel = 1
+        { $intNotificationLevel = 1
         }
-
         '^Notify\s*before\s*download$'
-        {
-            $intNotificationLevel = 2
+        { $intNotificationLevel = 2
         }
-
         '^Notify\s*before\s*installation$'
-        {
-            $intNotificationLevel = 3
+        { $intNotificationLevel = 3
         }
-
         '^Scheduled\s*installation$'
-        {
-            $intNotificationLevel = 4
+        { $intNotificationLevel = 4
         }
-
         default
-        {
-            throw 'Invalid notification level'
+        { throw 'Invalid notification level'
         }
     }
 
@@ -410,14 +382,14 @@ function Get-WuaSession
 
 function get-WuaSearcher
 {
-    [CmdletBinding(DefaultParameterSetName = 'category')]
+    [cmdletbinding(DefaultParameterSetName = 'category')]
     param
     (
-        [Parameter(Mandatory = $true, ParameterSetName = 'searchString')]
+        [parameter(Mandatory = $true, ParameterSetName = 'searchString')]
         [System.String]
         $SearchString,
 
-        [Parameter(ParameterSetName = 'category')]
+        [parameter(ParameterSetName = 'category')]
         [ValidateSet("Security", "Important", "Optional")]
         [AllowEmptyCollection()]
         [AllowNull()]
@@ -438,13 +410,11 @@ function get-WuaSearcher
     }
 
     return Get-WuaWrapper -tryBlock {
-        param
-        (
-            [Parameter(Mandatory = $true)]
+        param(
+            [parameter(Mandatory = $true)]
             [System.String]
             $memberSearchString
         )
-
         Write-Verbose -Message "Searching for updating using: $memberSearchString" -Verbose
         return ((Get-WuaSession).CreateUpdateSearcher()).Search($memberSearchString)
     } -argumentList @($memberSearchString)
@@ -456,7 +426,7 @@ function Test-SearchResult
     [OutputType([System.Boolean])]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [parameter(Mandatory = $true)]
         [ValidateNotNull()]
         [System.Object]
         $SearchResult
@@ -467,13 +437,11 @@ function Test-SearchResult
         Write-Verbose 'Did not find updates on SearchResult'
         return $false
     }
-
     if (!(@(Get-Member -InputObject $SearchResult.Updates | Select-Object -ExpandProperty Name) -contains 'Count'))
     {
         Write-Verbose 'Did not find count on updates on SearchResult'
         return $false
     }
-
     return $true
 }
 
@@ -522,14 +490,12 @@ function Get-TargetResource
     {
         $script:retryAttempts = $RetryAttempts
     }
-
     if ($RetryDelay -ge 0)
     {
         $script:retryDelay = $RetryAttempts
     }
 
     Test-TargetResourceProperties @PSBoundParameters
-
     $totalUpdatesNotInstalled = $null
     $UpdateNowReturn = $null
     $rebootRequired = $null
@@ -580,6 +546,7 @@ function Get-TargetResource
     }
     $returnValue
 }
+
 
 function Set-TargetResource
 {
@@ -709,6 +676,7 @@ function Set-TargetResource
     }
 }
 
+
 function Test-TargetResource
 {
     [CmdletBinding()]
@@ -773,33 +741,29 @@ function Test-TargetResourceProperties
 {
     param
     (
-        [Parameter(Mandatory = $true)]
+        [parameter(Mandatory = $true)]
         [ValidateSet("Yes")]
         [System.String]
         $IsSingleInstance,
 
-        [Parameter()]
         [ValidateSet("Security", "Important", "Optional")]
         [AllowEmptyCollection()]
         [AllowNull()]
         [System.String[]]
         $Category,
 
-        [Parameter()]
         [ValidateSet("Disabled", "ScheduledInstallation")]
         [System.String]
         $Notifications,
 
-        [Parameter(Mandatory = $true)]
+        [parameter(Mandatory = $true)]
         [ValidateSet("WindowsUpdate", "MicrosoftUpdate", "WSUS")]
         [System.String]
         $Source,
 
-        [Parameter()]
         [System.Boolean]
         $UpdateNow
     )
-
     $searchStringParams = @{ }
     foreach ($CategoryItem in $Category)
     {

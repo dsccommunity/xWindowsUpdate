@@ -50,7 +50,7 @@ Pester:
     - tests/Unit
   ExcludeTag:
   Tag:
-  CodeCoverageThreshold: 85
+  CodeCoverageThreshold: 57
   CodeCoverageOutputFile: JaCoCo_Coverage.xml
   CodeCoverageOutputFileEncoding: ascii
 

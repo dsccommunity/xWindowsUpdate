@@ -1,7 +1,43 @@
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID e3e23ff2-09dc-40f3-893a-e3ab840e516c
+
+.AUTHOR DSC Community
+
+.COMPANYNAME DSC Community
+
+.COPYRIGHT DSC Community contributors. All rights reserved.
+
+.TAGS DSCConfiguration
+
+.LICENSEURI https://github.com/dsccommunity/xWindowsUpdate/blob/master/LICENSE
+
+.PROJECTURI https://github.com/dsccommunity/xWindowsUpdate
+
+.ICONURI https://dsccommunity.org/images/DSC_Logo_300p.png
+
+.EXTERNALMODULEDEPENDENCIES
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+First version.
+
+.PRIVATEDATA 2016-Datacenter,2016-Datacenter-Server-Core
+
+#>
+
+#Requires -Module xWindowsUpdate
+
 <#
-    .EXAMPLE
-        This sample looks at installing a particular windows update. However, the URI and ID properties can be changed
-        as per the hotfix that you want to install
+    .DESCRIPTION
+        This example shows how to install a particular windows update. However,
+        the URI and ID properties can be changed as per the hotfix that you want
+        to install
 #>
 Configuration xHotfix_xWindowsUpdateFromURI_Config
 {
