@@ -1141,6 +1141,12 @@ try
                 } -Verifiable
 
                 Mock -CommandName Get-WuaSystemInfo -MockWith {
+                    param
+                    (
+                        [Parameter()]
+                        $callCount
+                    )
+
                     if (!$callCount)
                     {
                         $callCount = 1

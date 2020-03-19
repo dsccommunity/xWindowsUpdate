@@ -1,5 +1,5 @@
-$script:dscModuleName = 'xWindowsUpdate' # Example xNetworking
-$script:dscResourceName = 'MSFT_xWindowsUpdate' # Example MSFT_xFirewall
+$script:dscModuleName = 'xWindowsUpdate'
+$script:dscResourceName = 'MSFT_xWindowsUpdate'
 
 function Invoke-TestSetup
 {
