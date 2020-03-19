@@ -24,7 +24,7 @@ function Get-TargetResource
 
     $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
 
-    Write-Verbose $($script:localizedData.GettingHotfixMessage -f ${Id})
+    Write-Verbose -Message ($script:localizedData.GettingHotfixMessage -f $Id)
 
     $hotfix = Get-HotFix -Id "KB$kbId"
 
@@ -35,42 +35,6 @@ function Get-TargetResource
     }
 
     $returnValue
-
-}
-
-$Debug = $true
-function Trace-Message
-{
-    param
-    (
-        [Parameter()]
-        [System.String]
-        $Message
-    )
-
-    if ($Debug)
-    {
-        Write-Verbose $Message
-    }
-}
-
-function New-InvalidArgumentException
-{
-    param
-    (
-        [Parameter()]
-        [System.String]
-        $Message,
-
-        [Parameter()]
-        [System.String]
-        $ParamName
-    )
-
-    $exception = new-object System.ArgumentException $Message, $ParamName
-    $errorRecord = New-Object System.Management.Automation.ErrorRecord $exception, $ParamName, 'InvalidArgument', $null
-
-    throw $errorRecord
 }
 
 # The Set-TargetResource cmdlet
@@ -108,7 +72,7 @@ function Set-TargetResource
         $Log = [IO.Path]::GetTempFileName()
         $Log += '.etl'
 
-        Write-Verbose "$($script:localizedData.LogNotSpecified -f ${Log})"
+        Write-Verbose -Message ($script:localizedData.LogNotSpecified -f $Log)
     }
 
     $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
@@ -116,34 +80,41 @@ function Set-TargetResource
     if ($Ensure -eq 'Present')
     {
         $filePath = Test-WindowsUpdatePath -uri $uri -Credential $Credential
-        Write-Verbose "$($script:localizedData.StartKeyWord) $($script:localizedData.ActionInstallUsingWsusa)"
+
+        Write-Verbose -Message "$($script:localizedData.StartKeyWord) $($script:localizedData.ActionInstallUsingWsusa)"
 
         Start-Process -FilePath 'wusa.exe' -ArgumentList "`"$filepath`" /quiet /norestart /log:`"$Log`"" -Wait -NoNewWindow -ErrorAction SilentlyContinue
-        $errorOccurred = Get-WinEvent -Path $Log -Oldest | Where-Object { $_.Id -eq 3 }
+
+        $errorOccurred = Get-WinEvent -Path $Log -Oldest | Where-Object -FilterScript { $_.Id -eq 3 }
+
         if ($errorOccurred)
         {
-            $errorMessage = $errorOccurred.Message
-            throw "$($script:localizedData.ErrorOccurredOnHotfixInstall -f ${Log}, ${errorMessage})"
+            $errorMessage = $script:localizedData.ErrorOccurredOnHotfixInstall -f $Log, $errorOccurred.Message
+
+            New-InvalidOperationException -Message $errorMessage
         }
 
-        Write-Verbose "$($script:localizedData.EndKeyWord) $($script:localizedData.ActionInstallUsingWsusa)"
+        Write-Verbose -Message "$($script:localizedData.EndKeyWord) $($script:localizedData.ActionInstallUsingWsusa)"
     }
     else
     {
         $argumentList = "/uninstall /KB:$kbId /quiet /norestart /log:`"$Log`""
 
-        Write-Verbose "$($script:localizedData.StartKeyWord) $($script:localizedData.ActionUninstallUsingWsusa) Arguments: $ArgumentList"
+        Write-Verbose -Message "$($script:localizedData.StartKeyWord) $($script:localizedData.ActionUninstallUsingWsusa) Arguments: $ArgumentList"
 
         Start-Process -FilePath 'wusa.exe' -ArgumentList $argumentList  -Wait -NoNewWindow  -ErrorAction SilentlyContinue
-        #Read the log and see if there was an error event
-        $errorOccurred = Get-WinEvent -Path $Log -Oldest | Where-Object { $_.Id -eq 3 }
+
+        # Read the log and see if there was an error event
+        $errorOccurred = Get-WinEvent -Path $Log -Oldest | Where-Object -FilterScript { $_.Id -eq 3 }
+
         if ($errorOccurred)
         {
-            $errorMessage = $errorOccurred.Message
-            throw "$($script:localizedData.ErrorOccurredOnHotfixUninstall -f ${Log}, ${errorMessage})"
+            $errorMessage = $script:localizedData.ErrorOccurredOnHotfixUninstall -f $Log, $errorOccurred.Message
+
+            New-InvalidOperationException -Message $errorMessage
         }
 
-        Write-Verbose "$($script:localizedData.EndKeyWord) $($script:localizedData.ActionUninstallUsingWsusa)"
+        Write-Verbose -Message "$($script:localizedData.EndKeyWord) $($script:localizedData.ActionUninstallUsingWsusa)"
     }
 
     if (Test-Path -Path 'variable:\LASTEXITCODE')
@@ -155,7 +126,6 @@ function Set-TargetResource
         }
     }
 }
-
 
 # Function to test if Hotfix is installed.
 function Test-TargetResource
@@ -186,12 +156,16 @@ function Test-TargetResource
         $Credential
     )
 
-    Write-Verbose "$($script:localizedData.TestingEnsure -f ${Ensure})"
+    Write-Verbose -Message ($script:localizedData.TestingEnsure -f $Ensure)
+
     $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
 
-    # This is not the correct way to test to see if an update is applicable to a machine
-    # but, WUSA does not currently expose a way to ask.
+    <#
+        This is not the correct way to test to see if an update is applicable to a machine
+        but, WUSA does not currently expose a way to ask.
+    #>
     $result = Get-HotFix -Id "KB$kbId" -ErrorAction SilentlyContinue
+
     $returnValue = [System.Boolean] $result
 
     if ($Ensure -eq 'Present')
@@ -202,7 +176,6 @@ function Test-TargetResource
     {
         return !$returnValue
     }
-
 }
 
 function Test-StandardArguments
@@ -218,33 +191,44 @@ function Test-StandardArguments
         $Id
     )
 
-    Trace-Message ($script:localizedData.TestStandardArgumentsPathWasPath -f $Path)
+    Write-Verbose -Message ($script:localizedData.TestStandardArgumentsPathWasPath -f $Path)
+
     $uri = $null
+
     try
     {
         $uri = [uri] $Path
     }
     catch
     {
-        New-InvalidArgumentException ($script:localizedData.InvalidPath -f $Path) 'Path'
+        $errorMessage = $script:localizedData.InvalidPath -f $Path
+
+        New-InvalidArgumentException -ArgumentName 'Path' -Message $errorMessage
     }
 
     if (-not @('file', 'http', 'https') -contains $uri.Scheme)
     {
-        Trace-Message ($Localized.TheUriSchemeWasUriScheme -f $uri.Scheme)
-        New-InvalidArgumentException ($script:localizedData.InvalidPath -f $Path) 'Path'
+        $errorMessage = $script:localizedData.InvalidPath -f $Path, $uri.Scheme
+
+        New-InvalidArgumentException -ArgumentName 'Path' -Message $errorMessage
     }
 
     $pathExt = [System.IO.Path]::GetExtension($Path)
-    Trace-Message ($script:localizedData.ThePathExtensionWasPathExt -f $pathExt)
+
+    Write-Verbose -Message ($script:localizedData.ThePathExtensionWasPathExt -f $pathExt)
+
     if (-not @('.msu') -contains $pathExt.ToLower())
     {
-        New-InvalidArgumentException ($script:localizedData.InvalidBinaryType -f $Path) 'Path'
+        $errorMessage = $script:localizedData.InvalidBinaryType -f $Path
+
+        New-InvalidArgumentException -ArgumentName 'Path' -Message $errorMessage
     }
 
     if (-not $Id)
     {
-        New-InvalidArgumentException ($script:localizedData.NeedsMoreInfo -f $Path) 'Id'
+        $errorMessage = $script:localizedData.NeedsMoreInfo -f $Path
+
+        New-InvalidArgumentException -ArgumentName 'Id' -Message $errorMessage
     }
     else
     {
@@ -256,7 +240,9 @@ function Test-StandardArguments
             }
             else
             {
-                New-InvalidArgumentException ($script:localizedData.InvalidIdFormat -f $Path) 'Id'
+                $errorMessage = $script:localizedData.InvalidIdFormat -f $Path
+
+                New-InvalidArgumentException -ArgumentName 'Id' -Message $errorMessage
             }
         }
         elseif ($id -match '[0-9]+')
@@ -267,7 +253,9 @@ function Test-StandardArguments
             }
             else
             {
-                New-InvalidArgumentException ($script:localizedData.InvalidIdFormat -f $Path) 'Id'
+                $errorMessage = $script:localizedData.InvalidIdFormat -f $Path
+
+                New-InvalidArgumentException -ArgumentName 'Id' -Message $errorMessage
             }
         }
     }
@@ -275,12 +263,12 @@ function Test-StandardArguments
     return @($uri, $kbId)
 }
 
+<#
+    .SYNOPSIS
+        Validate path, if necessary, cache file and return the location to be accessed
+#>
 function Test-WindowsUpdatePath
 {
-    <#
-        .SYNOPSIS
-        Validate path, if necessary, cache file and return the location to be accessed
-    #>
     param
     (
         [Parameter(Mandatory = $true)]
@@ -294,7 +282,7 @@ function Test-WindowsUpdatePath
 
     if ($uri.IsUnc)
     {
-        $psdriveArgs = @{
+        $psDriveArgs = @{
             Name       = ([guid]::NewGuid())
             PSProvider = 'FileSystem'
             Root       = (Split-Path $uri.LocalPath)
@@ -304,11 +292,12 @@ function Test-WindowsUpdatePath
         {
             #We need to optionally include these and then splat the hash otherwise
             #we pass a null for Credential which causes the cmdlet to pop a dialog up
-            $psdriveArgs['Credential'] = $Credential
+            $psDriveArgs['Credential'] = $Credential
         }
 
-        $psdrive = New-PSDrive @psdriveArgs
-        $Path = Join-Path $psdrive.Root (Split-Path -Leaf $uri.LocalPath) #Necessary?
+        $psDrive = New-PSDrive @psDriveArgs
+
+        $path = Join-Path $psDrive.Root (Split-Path -Leaf $uri.LocalPath) #Necessary?
     }
     elseif (@('http', 'https') -contains $uri.Scheme)
     {
@@ -318,7 +307,7 @@ function Test-WindowsUpdatePath
 
         try
         {
-            Trace-Message ($script:localizedData.CreatingCacheLocation)
+            Write-Verbose -Message ($script:localizedData.CreatingCacheLocation)
 
             if (-not (Test-Path -PathType Container $script:cacheLocation))
             {
@@ -327,56 +316,70 @@ function Test-WindowsUpdatePath
 
             $destName = Join-Path $script:cacheLocation (Split-Path -Leaf $uri.LocalPath)
 
-            Trace-Message ($script:localizedData.NeedToDownloadFileFromSchemeDestinationWillBeDestName -f $scheme, $destName)
+            Write-Verbose -Message ($script:localizedData.NeedToDownloadFileFromSchemeDestinationWillBeDestName -f $scheme, $destName)
 
             try
             {
-                Trace-Message ($script:localizedData.CreatingTheDestinationCacheFile)
+                Write-Verbose -Message ($script:localizedData.CreatingTheDestinationCacheFile)
+
                 $outStream = New-Object System.IO.FileStream $destName, 'Create'
             }
             catch
             {
-                #Should never happen since we own the cache directory
-                Throw-TerminatingError ($script:localizedData.CouldNotOpenDestFile -f $destName) $_
+                # Should never happen since we own the cache directory
+                $errorMessage = $script:localizedData.CouldNotOpenDestFile -f $destName
+
+                New-InvalidOperationException -Message $errorMessage -ErrorRecord $_
             }
 
             try
             {
-                Trace-Message ($script:localizedData.CreatingTheSchemeStream -f $scheme)
+                Write-Verbose -Message ($script:localizedData.CreatingTheSchemeStream -f $scheme)
+
                 $request = [System.Net.WebRequest]::Create($uri)
-                Trace-Message ($script:localizedData.SettingDefaultCredential)
+
+                Write-Verbose -Message ($script:localizedData.SettingDefaultCredential)
+
                 $request.Credentials = [System.Net.CredentialCache]::DefaultCredentials
+
                 if ($scheme -eq 'http')
                 {
-                    Trace-Message ($script:localizedData.SettingAuthenticationLevel)
+                    Write-Verbose -Message ($script:localizedData.SettingAuthenticationLevel)
+
                     # default value is MutualAuthRequested, which applies to https scheme
                     $request.AuthenticationLevel = [System.Net.Security.AuthenticationLevel]::None
                 }
                 if ($scheme -eq 'https')
                 {
-                    Trace-Message ($script:localizedData.IgnoringBadCertificates)
+                    Write-Verbose -Message ($script:localizedData.IgnoringBadCertificates)
+
                     $request.ServerCertificateValidationCallBack = { $true }
                 }
-                Trace-Message ($script:localizedData.GettingTheSchemeResponseStream -f $scheme)
+
+                Write-Verbose -Message ($script:localizedData.GettingTheSchemeResponseStream -f $scheme)
+
                 $responseStream = (([System.Net.HttpWebRequest] $request).GetResponse()).GetResponseStream()
             }
             catch
             {
-                Trace-Message ($script:localizedData.ErrorOutString -f ($_ | Out-String))
-                Throw-TerminatingError ($script:localizedData.CouldNotGetHttpStream -f $scheme, $Path) $_
+                $errorMessage = $script:localizedData.CouldNotGetHttpStream -f $scheme, $path
+
+                New-InvalidOperationException -Message $errorMessage -ErrorRecord $_
             }
 
             try
             {
-                Trace-Message ($script:localizedData.CopyingTheSchemeStreamBytesToTheDiskCache -f $scheme)
+                Write-Verbose -Message ($script:localizedData.CopyingTheSchemeStreamBytesToTheDiskCache -f $scheme)
+
                 $responseStream.CopyTo($outStream)
                 $responseStream.Flush()
                 $outStream.Flush()
             }
             catch
             {
-                Trace-Message ($script:localizedData.ErrorOutString -f ($_ | Out-String))
-                Throw-TerminatingError ($script:localizedData.ErrorCopyingDataToFile -f $Path, $destName) $_
+                $errorMessage = $script:localizedData.ErrorCopyingDataToFile -f $path, $destName
+
+                New-InvalidOperationException -Message $errorMessage -ErrorRecord $_
             }
         }
         finally
@@ -391,11 +394,13 @@ function Test-WindowsUpdatePath
                 $responseStream.Close()
             }
         }
-        Trace-Message ($script:localizedData.RedirectingPackagePathToCacheFileLocation)
-        $Path = $downloadedFileName = $destName
+
+        Write-Verbose -Message ($script:localizedData.RedirectingPackagePathToCacheFileLocation)
+
+        $Path = $destName
     }
 
-    return $Path
+    return $path
 }
 
 Export-ModuleMember -Function *-TargetResource

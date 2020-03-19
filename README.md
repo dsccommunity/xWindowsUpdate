@@ -2,6 +2,7 @@
 
 [![Build Status](https://dev.azure.com/dsccommunity/xWindowsUpdate/_apis/build/status/dsccommunity.xWindowsUpdate?branchName=master)](https://dev.azure.com/dsccommunity/xWindowsUpdate/_build/latest?definitionId={definitionId}&branchName=master)
 ![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/dsccommunity/xWindowsUpdate/{definitionId}/master)
+[![codecov](https://codecov.io/gh/dsccommunity/xWindowsUpdate/branch/master/graph/badge.svg)](https://codecov.io/gh/dsccommunity/xWindowsUpdate)
 [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/xWindowsUpdate/{definitionId}/master)](https://dsccommunity.visualstudio.com/xWindowsUpdate/_test/analytics?definitionId={definitionId}&contextType=build)
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/xWindowsUpdate?label=xWindowsUpdate%20Preview)](https://www.powershellgallery.com/packages/xWindowsUpdate/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/xWindowsUpdate?label=xWindowsUpdate)](https://www.powershellgallery.com/packages/xWindowsUpdate/)

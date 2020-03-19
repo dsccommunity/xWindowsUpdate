@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - xWindowsUpdateAgent
   - Added Retry logic to known transient errors ([issue #24](https://github.com/dsccommunity/xWindowsUpdate/issues/24)).
 
+### Changed
+
+- xWindowsUpdate
+  - Moved the `Set-StrictMode` so that it is used during testing only and
+    not during runtime.
+  - Removed the helper function `Trace-Message` and using the `Write-Verbose`
+    directly instead.
+  - The helper function `New-InvalidArgumentException` was replaced by
+    its equivalent in the module DscResource.Common.
+- xWindowsUpdateAgent
+  - Removed the `$PSCmdlet.ShouldProcess` calls from code since DSC does not
+    support interactive actions.
+  - No longer defaults to output verbose messages.
+
 ### Removed
 
 - xWindowsUpdate
