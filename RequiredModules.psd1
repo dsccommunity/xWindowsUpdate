@@ -20,5 +20,8 @@
     'DscResource.AnalyzerRules' = 'latest'
     xDscResourceDesigner        = 'latest'
     'DscResource.DocGenerator'  = 'latest'
+
+    # Build dependent modules
+    'DscResource.Common'        = 'latest'
 }
 

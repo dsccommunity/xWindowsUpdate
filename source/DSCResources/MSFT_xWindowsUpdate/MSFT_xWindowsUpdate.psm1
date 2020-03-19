@@ -1,3 +1,9 @@
+$script:resourceHelperModulePath = Join-Path -Path $PSScriptRoot -ChildPath '..\..\Modules\DscResource.Common'
+
+Import-Module -Name $script:resourceHelperModulePath
+
+$script:localizedData = Get-LocalizedData -DefaultUICulture 'en-US'
+
 Data LocalizedData
 {
     # culture="en-US"e
@@ -59,7 +65,6 @@ function Get-TargetResource
         [System.String]
         $Id
     )
-    Set-StrictMode -Version latest
 
     $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
 
@@ -87,8 +92,6 @@ function Trace-Message
         $Message
     )
 
-    Set-StrictMode -Version latest
-
     if ($Debug)
     {
         Write-Verbose $Message
@@ -107,8 +110,6 @@ function New-InvalidArgumentException
         [System.String]
         $ParamName
     )
-
-    Set-StrictMode -Version latest
 
     $exception = new-object System.ArgumentException $Message, $ParamName
     $errorRecord = New-Object System.Management.Automation.ErrorRecord $exception, $ParamName, 'InvalidArgument', $null
@@ -145,8 +146,6 @@ function Set-TargetResource
         [System.Management.Automation.PSCredential]
         $Credential
     )
-
-    Set-StrictMode -Version latest
 
     if (!$Log)
     {
@@ -231,7 +230,6 @@ function Test-TargetResource
         $Credential
     )
 
-    Set-StrictMode -Version latest
     Write-Verbose "$($LocalizedData.TestingEnsure -f ${Ensure})"
     $uri, $kbId = Test-StandardArguments -Path $Path -Id $Id
 
@@ -263,8 +261,6 @@ function Test-StandardArguments
         [System.String]
         $Id
     )
-
-    Set-StrictMode -Version latest
 
     Trace-Message ($LocalizedData.TestStandardArgumentsPathWasPath -f $Path)
     $uri = $null
@@ -339,8 +335,6 @@ function Test-WindowsUpdatePath
         [System.Management.Automation.PSCredential]
         $Credential
     )
-
-    Set-StrictMode -Version latest
 
     if ($uri.IsUnc)
     {

@@ -1,4 +1,9 @@
-Set-StrictMode -Version latest
+$script:resourceHelperModulePath = Join-Path -Path $PSScriptRoot -ChildPath '..\..\Modules\DscResource.Common'
+
+Import-Module -Name $script:resourceHelperModulePath
+
+$script:localizedData = Get-LocalizedData -DefaultUICulture 'en-US'
+
 $script:WuaSearchString = 'IsAssigned=1 and IsHidden=0 and IsInstalled=0'
 $script:retryAttempts = 3
 $script:retryDelay = 0

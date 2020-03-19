@@ -29,6 +29,8 @@ Invoke-TestSetup
 try
 {
     InModuleScope $script:dscResourceName {
+        Set-StrictMode -Version 1.0
+
         #region Pester Test Initialization
         $script:mockedSearchResultWithUpdate = [PSCustomObject] @{
             Updates = @{
@@ -1139,7 +1141,6 @@ try
                 } -Verifiable
 
                 Mock -CommandName Get-WuaSystemInfo -MockWith {
-                    Set-StrictMode -Off
                     if (!$callCount)
                     {
                         $callCount = 1

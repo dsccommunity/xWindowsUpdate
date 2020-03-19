@@ -1,5 +1,5 @@
-$Script:dscModuleName = 'xWindowsUpdate' # Example xNetworking
-$Script:dscResourceName = 'MSFT_xWindowsUpdate' # Example MSFT_xFirewall
+$script:dscModuleName = 'xWindowsUpdate' # Example xNetworking
+$script:dscResourceName = 'MSFT_xWindowsUpdate' # Example MSFT_xFirewall
 
 function Invoke-TestSetup
 {
@@ -29,6 +29,8 @@ Invoke-TestSetup
 try
 {
     InModuleScope $script:dscResourceName {
+        Set-StrictMode -Version 1.0
+
         Describe "MSFT_xWindowsUpdate\Get-TargetResource" {
             Mock -CommandName Get-HotFix -MockWith {
                 return [PSCustomObject] @{
