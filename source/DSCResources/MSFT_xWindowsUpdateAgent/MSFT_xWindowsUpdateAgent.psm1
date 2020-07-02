@@ -850,6 +850,14 @@ function Test-TargetResourceProperties
         $Source,
 
         [Parameter()]
+        [System.Int32]
+        $RetryAttempts = -1,
+
+        [Parameter()]
+        [System.Int32]
+        $RetryDelay = -1,
+
+        [Parameter()]
         [System.Boolean]
         $UpdateNow
     )
