@@ -26,6 +26,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     support interactive actions.
   - No longer defaults to output verbose messages.
 
+### Fixed
+
+- xWindowsUpdateAgent
+  - Setting `RetryAttempts` or `RetryDelay` made `Get-TargetResource`,
+    `Set-TargetResource` and `Test-TargetResource` throw, because they splat
+    `$PSBoundParameters` to `Test-TargetResourceProperties`, which did not
+    accept those parameters.
+  - `RetryDelay` had no effect: `Get-TargetResource` and `Set-TargetResource`
+    assigned `RetryAttempts` to the delay, and `Assert-Retry` called
+    `Start-Sleep` after its `return`/`throw`, so retries never waited.
+
 ### Removed
 
 - xWindowsUpdate
