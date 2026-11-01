@@ -1480,6 +1480,59 @@ try
             }
         }
 
+        Describe 'MSFT_xWindowsUpdateAgent\Assert-Retry' {
+            $retryableError = [PSCustomObject] @{
+                Retryable   = $true
+                Exception   = [System.Exception]::new('Mocked transient error')
+                WarningText = 'Mocked transient error.'
+            }
+
+            BeforeEach {
+                $script:retryAttempts = 2
+                $script:retryDelay = 7
+                $script:lastHResult = 0
+                $script:errorCount = 0
+            }
+
+            Mock -CommandName Start-Sleep
+            Mock -CommandName Write-Warning
+
+            It 'Should wait RetryDelay seconds before returning $true to retry' {
+                Assert-Retry -ErrorObject $retryableError | Should -BeTrue
+                Assert-MockCalled -CommandName Start-Sleep -Exactly -Times 1 -Scope It -ParameterFilter { $Seconds -eq 7 }
+            }
+
+            It 'Should throw without waiting once the retry attempts are used up' {
+                Assert-Retry -ErrorObject $retryableError | Should -BeTrue
+                Assert-Retry -ErrorObject $retryableError | Should -BeTrue
+                { Assert-Retry -ErrorObject $retryableError } | Should -Throw 'Mocked transient error'
+                Assert-MockCalled -CommandName Start-Sleep -Exactly -Times 2 -Scope It
+            }
+
+            It 'Should return $false without waiting for an error that is not retryable' {
+                Assert-Retry -ErrorObject ([PSCustomObject] @{ Retryable = $false }) | Should -BeFalse
+                Assert-MockCalled -CommandName Start-Sleep -Exactly -Times 0 -Scope It
+            }
+        }
+
+        Describe 'MSFT_xWindowsUpdateAgent\Get-TargetResource retry settings' {
+            Mock -CommandName Get-WuaServiceManager -MockWith { return $script:mockedMicrosoftUpdateServiceManager }
+            Mock -CommandName Get-WuaSearcher -MockWith { return $null }
+            Mock -CommandName Get-WuaAuNotificationLevel -MockWith { return $script:mockedWuaDisableNotificationLevel }
+            Mock -CommandName Get-WuaSystemInfo -MockWith { return $script:mockedWuaSystemInfoNoReboot }
+
+            It 'Should use RetryDelay, not RetryAttempts, as the delay between retries' {
+                $null = Get-TargetResource -IsSingleInstance 'yes' -Source WindowsUpdate -RetryAttempts 2 -RetryDelay 30
+
+                $script:retryAttempts | Should -Be 2
+                $script:retryDelay | Should -Be 30
+            }
+
+            It 'Should not throw when RetryAttempts and RetryDelay are passed to Test-TargetResourceProperties' {
+                { Test-TargetResourceProperties -IsSingleInstance 'Yes' -Source WindowsUpdate -RetryAttempts 2 -RetryDelay 30 } | Should -Not -Throw
+            }
+        }
+
         Describe 'MSFT_xWindowsUpdateAgent\Get-WuaSearcher' {
             $testCases = @(
                 @{

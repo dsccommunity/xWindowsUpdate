@@ -160,14 +160,14 @@ function Assert-Retry
         {
             Write-Warning "$($ErrorObject.WarningText) Retrying..."
 
+            Start-Sleep -Seconds $script:retryDelay
+
             return $true
         }
         else
         {
             throw $ErrorObject.Exception
         }
-
-        Start-Sleep -Seconds $script:retryDelay
     }
     else
     {
@@ -554,7 +554,7 @@ function Get-TargetResource
 
     if ($RetryDelay -ge 0)
     {
-        $script:retryDelay = $RetryAttempts
+        $script:retryDelay = $RetryDelay
     }
 
     Test-TargetResourceProperties @PSBoundParameters
@@ -660,7 +660,7 @@ function Set-TargetResource
     }
     if ($RetryDelay -ge 0)
     {
-        $script:retryDelay = $RetryAttempts
+        $script:retryDelay = $RetryDelay
     }
 
     Test-TargetResourceProperties @PSBoundParameters
@@ -851,7 +851,16 @@ function Test-TargetResourceProperties
 
         [Parameter()]
         [System.Boolean]
-        $UpdateNow
+        $UpdateNow,
+
+        # Accepted so callers can splat @PSBoundParameters; not validated here.
+        [Parameter()]
+        [System.Int32]
+        $RetryAttempts,
+
+        [Parameter()]
+        [System.Int32]
+        $RetryDelay
     )
 
     $searchStringParams = @{ }
